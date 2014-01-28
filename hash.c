@@ -1,31 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "hash.h"
 
 #define TAM 97
 
 
 struct variavel{
 	char *nome;
-	char *valor;
+	void *valor;
 	int tipo; //inteiro=0, caracter=1, string=2, real=3, booleano =4
 	int escopo; //local=0, global=1
 	int  usada;
 };
-typedef struct variavel Variavel;
+
 struct funcao{
 	char *nome;
 	int retorno; // inteiro=0, caracter=1, string=2, real=3, booleano =4
 	int  aridade; 
 };
-typedef struct funcao Funcao;
+
 //tipo pode ser variavel=0 funcao=1
 struct lista{
 	int tipo;
 	void *info;
 	struct lista *prox;
 };
-typedef struct lista Lista;
+
 
 Lista* inicializa (void){
 	return NULL;
@@ -50,7 +51,7 @@ void imprime (Lista* l){
 		
 		if(p->tipo ==0){
 			v = (Variavel*)p->info;
-			printf(" Variavel: nome = %s valor = %s tipo = %d usada = %d escopo = %d \n",v->nome,v->valor,v->tipo,v->usada,v->escopo);		
+			printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d \n",v->nome,v->tipo,v->usada,v->escopo);		
 		}else if(p->tipo ==1){
 			f = (Funcao*)p->info;
 			printf("Funcao: nome = %s retorno = %d aridade = %d\n",f->nome, f->retorno, f->aridade);		
@@ -118,14 +119,50 @@ Lista* busca (Lista* l, char c[]){
 		p=t;	
 	}
 }*/
-
-Lista** insere_variavel (Lista** l, char nome[], char valor[], int tipo, int usada, int escopo){
+//insere a variavel em uma lista
+Lista* insere_variavel_lista(Lista* l, char nome[], int usada){
+	Lista* novo = (Lista*) malloc(sizeof(Lista));
+	Variavel* var = (Variavel*) malloc (sizeof(Variavel));
+	var->nome = nome;
+	var->valor = NULL;
+	var->tipo = -1;
+	var->usada = usada;
+	var->escopo = -1;
+	novo->info = var;
+	novo->tipo = 0;
+	novo->prox = l;
+	l = novo;
+	return l;
+}
+//insere uma lista de variavel na tabela hash
+Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo){
+	Lista* p;
+	Variavel* v;
+	for(p=l;p!=NULL;p=p->prox){
+		printf("ok1\n");
+		v = (Variavel*)p->info;
+		if(tipo == 0)
+			v->valor = (int*) malloc(sizeof(int));
+		if(tipo == 1)
+			v->valor = (char*) malloc(sizeof(char));
+		if(tipo == 2)
+			v->valor = (char**) malloc(sizeof(char*));
+		if(tipo == 3)
+			v->valor = (float*) malloc(sizeof(float));
+		if(tipo == 4)
+			v->valor = (int*) malloc(sizeof(int));
+		insere_variavel(h, v->nome,v->valor,tipo, v->usada,0);
+		printf("ok\n");
+	}
+}
+//insere uma variavel na tabela hash
+Lista** insere_variavel (Lista** l, char nome[], void *valor, int tipo, int usada, int escopo){
 	int pos=0,i=0;
 	char c;
 	Lista* novo = (Lista*) malloc(sizeof(Lista));
 	Variavel* var = (Variavel*) malloc (sizeof(Variavel));
 	var->nome = nome;
-	var->valor = valor;
+	//var->valor = valor;
 	var->tipo = tipo;
 	var->usada = usada;
 	var->escopo = escopo;
@@ -178,7 +215,7 @@ void imprime_hash(Lista** l){
 	}
 }
 
-void main (void){
+/*void main (void){
 	int i;
 	Lista* l;
 	Lista** v;
@@ -201,4 +238,4 @@ void main (void){
 	
 	imprime_hash(v);
 	
-}
+}*/

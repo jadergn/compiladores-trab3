@@ -1,9 +1,10 @@
 all: analisador relatorio
 
 analisador:	
+	gcc -c hash.c
 	flex -i analisador_lexico.l
-	bison analisador_sintatico.y
-	gcc -o trab2 analisador_sintatico.tab.c -lfl
+	bison -v analisador_sintatico.y
+	gcc -o trab3 analisador_sintatico.tab.c -lfl hash.o
 	
 relatorio:
 	pdflatex trab2.tex

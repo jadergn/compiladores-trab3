@@ -1,11 +1,15 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include "hash.h"
 int i = 0;
 int num_linha = 1;
 char comentario[2000];
-%}
+Lista *var;
 
+
+%}
+var = inicializa();
 %%
 
 

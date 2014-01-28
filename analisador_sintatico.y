@@ -1,5 +1,10 @@
 %{
 #include <stdio.h>
+#include "hash.h"
+
+Lista ** tab_variaveis;
+
+extern char * yytext;
 %}
 
 /*%error-verbose*/
@@ -88,6 +93,7 @@
 
 %start algoritmo
 
+
 %%
 
 
@@ -118,8 +124,8 @@ tipo_variavel
 ;
 
 lista_variaveis
-: lista_variaveis token_virgula token_identificador
-| token_identificador
+: lista_variaveis token_virgula token_identificador{printf("%s\n",yytext);}
+| token_identificador{printf("%s\n",yytext);}
 ;
 
 tipo_primitivo
@@ -341,6 +347,7 @@ paramentro_funcao
 #include "lex.yy.c"
 
 main(){
+	tab_variaveis = inicializa_hash();
 	yyparse();
 }
 
