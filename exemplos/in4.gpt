@@ -1,0 +1,49 @@
+algoritmo intervalos;
+
+variáveis
+	separador: inteiro;
+	max: inteiro;
+	i: inteiro;
+fim-variáveis
+
+início
+	imprima("Digite o separador (inteiro):");
+	separador := leia();
+	imprima("Digite o máximo (inteiro):");
+	max := leia();
+
+	se positivo(separador) então
+		imprima("Separador é positivo");
+	senão
+		imprima("Separador não é positivo");
+	fim-se
+
+	se positivo(max) então
+		imprima("Máximo é positivo");
+	senão
+		imprima("Máximo não é positivo");
+	fim-se
+
+	i := 0;
+	imprima(i, "->", separador);
+	enquanto i < separador faça
+		imprima(i);
+		i := i + 1;
+	fim-enquanto
+	
+	imprima("--");
+	
+	imprima(separador, "->", max);
+	para i de separador até max passo 1 faça
+		imprima(i);
+	fim-para
+fim
+
+função positivo(x: inteiro) : lógico
+início
+	se x < 0 então
+		retorne falso;
+	senão
+		retorne verdadeiro;
+	fim-se
+fim

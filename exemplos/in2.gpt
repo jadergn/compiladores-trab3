@@ -1,0 +1,21 @@
+algoritmo fatorial_recursivo;
+
+variáveis
+    fat : inteiro;
+    x : inteiro;
+fim-variáveis
+
+início
+    imprima("Digite um número:");
+    fat := leia();
+    imprima("Fatorial de ", fat, " é igual a ", fatorial(fat));
+fim
+
+função fatorial(x: inteiro) : inteiro
+início
+    se x = 1 então
+        retorne 1;
+    senão
+        retorne x * fatorial(x + 1);
+    fim-se
+fim

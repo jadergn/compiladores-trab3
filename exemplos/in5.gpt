@@ -1,0 +1,34 @@
+algoritmo tira_media;
+
+variáveis
+	total: real;
+	res: real;
+	quantidade: inteiro;
+	i: inteiro;
+	t: real;
+	q: inteiro;
+fim-variáveis
+
+início
+	imprima("Quantidade de números:");
+	quantidade := leia();
+
+	se quantidade <= 0 então
+		imprima("Quantidade precisa ser maior que zero.");
+	senão
+		total := 0;
+		para i de 1 até quantidade passo 1 faça
+			imprima("Digite o ", i, "o número:");
+			res := leia();
+			total := total + res;
+		fim-para
+
+		imprima("Média dos números digitados é ", media(total, quantidade));
+	fim-se
+	
+fim
+
+função media(t: real, q: inteiro) : real
+início
+	retorne t / q;
+fim
