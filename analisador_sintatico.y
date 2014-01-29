@@ -3,8 +3,11 @@
 #include "hash.h"
 
 Lista ** tab_variaveis;
+Lista *var;
 
+extern int tipo;
 extern char * yytext;
+extern char identificador[100];
 %}
 
 /*%error-verbose*/
@@ -109,13 +112,30 @@ declaracao_algoritmo
 /*bloco de variaveis pode nao existir ou pode ser vazio*/
 bloco_variaveis
 : token_pr_variaveis declaracao_variaveis token_pr_fim_variaveis
+{
+	//imprime(var);
+}
 | token_pr_variaveis token_pr_fim_variaveis
 |
 ;
 
 declaracao_variaveis
 : lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
+{
+	printf("primeiro\n");
+	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
+	libera(var);
+	var = inicializa();	
+}
 | declaracao_variaveis lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
+{
+	printf("segundo\n");
+	//sempre que entra aqui da Segmentation fault, na hr de inserir. So funciona se for declarado apenas uma linha de variaveis(que ai nao vai entrar aqui fica na regra acima) se tiver mais q uma da Segmentation fault
+	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
+	libera(var);
+	var = inicializa();
+	
+}
 ;
 
 tipo_variavel
@@ -124,8 +144,17 @@ tipo_variavel
 ;
 
 lista_variaveis
-: lista_variaveis token_virgula token_identificador{printf("%s\n",yytext);}
-| token_identificador{printf("%s\n",yytext);}
+: lista_variaveis token_virgula token_identificador
+{
+	var = insere_variavel_lista(var,identificador,0);
+			
+	//printf("%s\n",identificador);
+}
+| token_identificador
+{
+	var = insere_variavel_lista(var,identificador,0);
+	//printf("%s\n",identificador);
+}
 ;
 
 tipo_primitivo
@@ -348,6 +377,7 @@ paramentro_funcao
 
 main(){
 	tab_variaveis = inicializa_hash();
+	var = inicializa();
 	yyparse();
 }
 

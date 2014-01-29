@@ -72,12 +72,15 @@
 #include "hash.h"
 
 Lista ** tab_variaveis;
+Lista *var;
 
+extern int tipo;
 extern char * yytext;
+extern char identificador[100];
 
 
 /* Line 268 of yacc.c  */
-#line 81 "analisador_sintatico.tab.c"
+#line 84 "analisador_sintatico.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -202,7 +205,7 @@ typedef int YYSTYPE;
 
 
 /* Line 343 of yacc.c  */
-#line 206 "analisador_sintatico.tab.c"
+#line 209 "analisador_sintatico.tab.c"
 
 #ifdef short
 # undef short
@@ -545,18 +548,18 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   101,   101,   102,   106,   111,   112,   113,   117,   118,
-     122,   123,   127,   128,   132,   133,   134,   135,   136,   140,
-     144,   145,   149,   150,   151,   152,   153,   158,   159,   163,
-     164,   168,   169,   170,   171,   172,   173,   174,   175,   179,
-     180,   184,   188,   189,   194,   198,   199,   203,   204,   205,
-     210,   211,   215,   219,   220,   224,   225,   226,   230,   231,
-     232,   236,   237,   238,   242,   243,   247,   248,   252,   253,
-     257,   258,   259,   263,   264,   265,   266,   267,   271,   272,
-     273,   277,   278,   279,   280,   284,   285,   286,   287,   288,
-     289,   290,   291,   295,   296,   297,   298,   299,   300,   304,
-     305,   309,   310,   314,   315,   319,   320,   324,   325,   329,
-     330,   334,   335,   339,   340
+       0,   104,   104,   105,   109,   114,   118,   119,   123,   130,
+     142,   143,   147,   153,   161,   162,   163,   164,   165,   169,
+     173,   174,   178,   179,   180,   181,   182,   187,   188,   192,
+     193,   197,   198,   199,   200,   201,   202,   203,   204,   208,
+     209,   213,   217,   218,   223,   227,   228,   232,   233,   234,
+     239,   240,   244,   248,   249,   253,   254,   255,   259,   260,
+     261,   265,   266,   267,   271,   272,   276,   277,   281,   282,
+     286,   287,   288,   292,   293,   294,   295,   296,   300,   301,
+     302,   306,   307,   308,   309,   313,   314,   315,   316,   317,
+     318,   319,   320,   324,   325,   326,   327,   328,   329,   333,
+     334,   338,   339,   343,   344,   348,   349,   353,   354,   358,
+     359,   363,   364,   368,   369
 };
 #endif
 
@@ -1698,24 +1701,66 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 12:
+        case 5:
 
 /* Line 1806 of yacc.c  */
-#line 127 "analisador_sintatico.y"
-    {printf("%s\n",yytext);}
+#line 115 "analisador_sintatico.y"
+    {
+	//imprime(var);
+}
+    break;
+
+  case 8:
+
+/* Line 1806 of yacc.c  */
+#line 124 "analisador_sintatico.y"
+    {
+	printf("primeiro\n");
+	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
+	libera(var);
+	var = inicializa();	
+}
+    break;
+
+  case 9:
+
+/* Line 1806 of yacc.c  */
+#line 131 "analisador_sintatico.y"
+    {
+	printf("segundo\n");
+	//sempre que entra aqui da seg fault, na hr de inserir
+	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
+	libera(var);
+	var = inicializa();
+	
+}
+    break;
+
+  case 12:
+
+/* Line 1806 of yacc.c  */
+#line 148 "analisador_sintatico.y"
+    {
+	var = insere_variavel_lista(var,identificador,0);
+			
+	//printf("%s\n",identificador);
+}
     break;
 
   case 13:
 
 /* Line 1806 of yacc.c  */
-#line 128 "analisador_sintatico.y"
-    {printf("%s\n",yytext);}
+#line 154 "analisador_sintatico.y"
+    {
+	var = insere_variavel_lista(var,identificador,0);
+	//printf("%s\n",identificador);
+}
     break;
 
 
 
 /* Line 1806 of yacc.c  */
-#line 1719 "analisador_sintatico.tab.c"
+#line 1764 "analisador_sintatico.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1946,13 +1991,14 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 345 "analisador_sintatico.y"
+#line 374 "analisador_sintatico.y"
 
 
 #include "lex.yy.c"
 
 main(){
 	tab_variaveis = inicializa_hash();
+	var = inicializa();
 	yyparse();
 }
 

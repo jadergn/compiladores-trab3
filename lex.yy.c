@@ -684,8 +684,8 @@ char *yytext;
 int i = 0;
 int num_linha = 1;
 char comentario[2000];
-Lista *var;
-
+char identificador[100];
+int tipo;
 
 #line 691 "lex.yy.c"
 
@@ -990,7 +990,7 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 22 "analisador_lexico.l"
-{return token_pr_inteiro;}
+{tipo = 0; return token_pr_inteiro;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
@@ -1000,7 +1000,7 @@ YY_RULE_SETUP
 case 8:
 YY_RULE_SETUP
 #line 24 "analisador_lexico.l"
-{return token_pr_caractere;}
+{tipo = 1; return token_pr_caractere;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
@@ -1010,7 +1010,7 @@ YY_RULE_SETUP
 case 10:
 YY_RULE_SETUP
 #line 26 "analisador_lexico.l"
-{return token_pr_real;}
+{tipo = 3; return token_pr_real;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
@@ -1020,7 +1020,7 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 #line 28 "analisador_lexico.l"
-{return token_pr_literal;}
+{tipo = 2; return token_pr_literal;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
@@ -1362,18 +1362,21 @@ YY_RULE_SETUP
 case 82:
 YY_RULE_SETUP
 #line 101 "analisador_lexico.l"
-{return token_identificador;} 
+{
+	strcpy(identificador,yytext);	
+	return token_identificador;
+} 
 	YY_BREAK
 case 83:
 /* rule 83 can match eol */
 YY_RULE_SETUP
-#line 103 "analisador_lexico.l"
+#line 106 "analisador_lexico.l"
 {num_linha++;}
 	YY_BREAK
 case 84:
 /* rule 84 can match eol */
 YY_RULE_SETUP
-#line 104 "analisador_lexico.l"
+#line 107 "analisador_lexico.l"
 {
 	strcpy(comentario,yytext);
 	for(i=0; i<strlen(comentario); i++){
@@ -1384,26 +1387,26 @@ YY_RULE_SETUP
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 112 "analisador_lexico.l"
+#line 115 "analisador_lexico.l"
 ;
 	YY_BREAK
 case 86:
 /* rule 86 can match eol */
 YY_RULE_SETUP
-#line 113 "analisador_lexico.l"
+#line 116 "analisador_lexico.l"
 {num_linha++;}
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 115 "analisador_lexico.l"
+#line 118 "analisador_lexico.l"
 {return token_desconhecido;}
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 117 "analisador_lexico.l"
+#line 120 "analisador_lexico.l"
 ECHO;
 	YY_BREAK
-#line 1407 "lex.yy.c"
+#line 1410 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2401,7 +2404,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 117 "analisador_lexico.l"
+#line 120 "analisador_lexico.l"
 
 
 

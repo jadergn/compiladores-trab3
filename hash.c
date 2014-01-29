@@ -46,7 +46,11 @@ void imprime (Lista* l){
 	Lista* p;
 	Variavel *v;
 	Funcao *f;
-	
+	/*if(l==NULL){
+		printf("vazio!!!");
+		exit(0);
+		}
+	printf("aqui\n");*/
 	for (p=l; p!= NULL; p=p->prox){
 		
 		if(p->tipo ==0){
@@ -111,19 +115,21 @@ Lista* busca (Lista* l, char c[]){
 	return l;
 }*/
 
-/*void libera (Lista* l){
+void libera (Lista* l){
 	Lista* p=l;
 	while (p!=NULL){
 		Lista* t = p->prox;
+		free(p->info);
 		free (p);
 		p=t;	
 	}
-}*/
+}
 //insere a variavel em uma lista
 Lista* insere_variavel_lista(Lista* l, char nome[], int usada){
 	Lista* novo = (Lista*) malloc(sizeof(Lista));
 	Variavel* var = (Variavel*) malloc (sizeof(Variavel));
-	var->nome = nome;
+	var->nome = (char*) malloc ((strlen(nome)+1)*sizeof(char));
+	strcpy(var->nome,nome);
 	var->valor = NULL;
 	var->tipo = -1;
 	var->usada = usada;
@@ -137,48 +143,64 @@ Lista* insere_variavel_lista(Lista* l, char nome[], int usada){
 //insere uma lista de variavel na tabela hash
 Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo){
 	Lista* p;
-	Variavel* v;
+	Variavel* v = (Variavel*) malloc (sizeof(Variavel));;
+	int usada,escopo;
+	char nome[100];
+	
 	for(p=l;p!=NULL;p=p->prox){
-		printf("ok1\n");
+		
 		v = (Variavel*)p->info;
-		if(tipo == 0)
-			v->valor = (int*) malloc(sizeof(int));
-		if(tipo == 1)
-			v->valor = (char*) malloc(sizeof(char));
-		if(tipo == 2)
-			v->valor = (char**) malloc(sizeof(char*));
-		if(tipo == 3)
-			v->valor = (float*) malloc(sizeof(float));
-		if(tipo == 4)
-			v->valor = (int*) malloc(sizeof(int));
-		insere_variavel(h, v->nome,v->valor,tipo, v->usada,0);
-		printf("ok\n");
+		strcpy(nome,v->nome);
+		usada = v->usada;
+		escopo = 0;
+		//printf("--nome = %s\n",nome);
+		insere_variavel(h, nome, tipo, usada,escopo);
+		nome[0]='\0';
 	}
 }
 //insere uma variavel na tabela hash
-Lista** insere_variavel (Lista** l, char nome[], void *valor, int tipo, int usada, int escopo){
+Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo){
 	int pos=0,i=0;
 	char c;
 	Lista* novo = (Lista*) malloc(sizeof(Lista));
 	Variavel* var = (Variavel*) malloc (sizeof(Variavel));
 	var->nome = nome;
-	//var->valor = valor;
 	var->tipo = tipo;
 	var->usada = usada;
 	var->escopo = escopo;
+	//printf("---------nome = %s\n",nome);
+	if(tipo == 0)
+		var->valor = (int*) malloc(sizeof(int));
+	else if(tipo == 1)
+		var->valor = (char*) malloc(sizeof(char));
+	else if(tipo == 2)
+		var->valor = (char**) malloc(sizeof(char*));
+	else if(tipo == 3)
+		var->valor = (float*) malloc(sizeof(float));
+	else if(tipo == 4)
+		var->valor = (int*) malloc(sizeof(int));
 	novo->info = var;
 	novo->tipo = 0;
-
+	//printf("3\n");	
 	c =nome[i];
 	pos =pos+(int)c;
-	while(c!='\n'){
+	while(c!='\0'){
 		i++;	
 		c=nome[i];
 		pos=pos+(int)c;
 	}
+	
 	pos = pos%TAM;
+	printf("4 - pos = %d nome = %s\n",pos,nome);
+	/*if(l[pos]==NULL)
+		printf("null nome =%s \n",nome); //nao ta indo o nome
+	else
+		printf("ok aqui!");	*/	
+	//O erro esta dando aqui qdo tenta acessar o l[pos], nao tenho ideia do que esta acontecendo
 	novo->prox = l[pos];
+	
 	l[pos] = novo;
+	//printf("5\n");
 	return l;
 }
 
