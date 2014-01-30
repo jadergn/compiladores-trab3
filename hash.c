@@ -42,22 +42,7 @@ Lista** inicializa_hash (){
 	return v;
 }
 
-void imprime (Lista* l){
-	Lista* p;
-	Variavel *v;
-	Funcao *f;
-	for (p=l; p!= NULL; p=p->prox){
-		
-		if(p->tipo ==0){
-			v = (Variavel*)p->info;
-			printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d \n",v->nome,v->tipo,v->usada,v->escopo);		
-		}else if(p->tipo ==1){
-			f = (Funcao*)p->info;
-			printf("Funcao: nome = %s retorno = %d aridade = %d\n",f->nome, f->retorno, f->aridade);		
-		}
-		
-	}
-}
+
 
 int vazia (Lista* l){
 	if(l==NULL)
@@ -77,11 +62,12 @@ Lista* busca (Lista** l, char nome[]){
 	c=nome[0];
 	//printf("nome = %s ",nome);
 	pos =pos+(int)c;
+	i=1;
 	while(c!='\0'){
-		i++;	
+			
 		c=nome[i];
 		pos=pos+(int)c;
-		
+		i++;
 	}
 	
 	pos = pos%TAM;
@@ -174,7 +160,8 @@ Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo){
 		strcpy(nome,v->nome);
 		usada = v->usada;
 		escopo = 0;
-		insere_variavel(h, nome, tipo, usada,escopo);
+		if(insere_variavel(h, nome, tipo, usada,escopo) == NULL)
+			return NULL;
 		nome[0]='\0';
 	}
 	return h;
@@ -188,8 +175,7 @@ Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo
 	var->nome = (char*) malloc ((strlen(nome)+1)*sizeof(char));
 	strcpy(var->nome,nome);
 	if(busca(l,var->nome) != NULL){
-		printf("Erro variavel redeclarada -> %s!\n",nome);
-		return l;
+		return NULL;
 	}
 	var->tipo = tipo;
 	var->usada = usada;
@@ -208,10 +194,11 @@ Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo
 	novo->tipo = 0;
 	c =nome[i];
 	pos =pos+(int)c;
+	i=1;
 	while(c!='\0'){
-		i++;	
 		c=nome[i];
 		pos=pos+(int)c;
+		i++;
 	}
 	
 	pos = pos%TAM;
@@ -255,6 +242,51 @@ void imprime_hash(Lista** l){
 	}
 }
 
+void imprime (Lista* l){
+	Lista* p;
+	Variavel *v;
+	Funcao *f;
+	for (p=l; p!= NULL; p=p->prox){
+		
+		if(p->tipo ==0){
+			v = (Variavel*)p->info;
+			printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d \n",v->nome,v->tipo,v->usada,v->escopo);		
+		}else if(p->tipo ==1){
+			f = (Funcao*)p->info;
+			printf("Funcao: nome = %s retorno = %d aridade = %d\n",f->nome, f->retorno, f->aridade);		
+		}
+		
+	}
+}
+
+void verifica_variavel_usada(Lista** l){
+	int i;
+	Lista* p;
+	Variavel *v;
+	for(i=0;i<TAM;i++){
+		if(l[i]!=NULL){
+			verifica(l[i]);
+		}	
+	}
+}
+void verifica (Lista* l){
+	Lista* p;
+	Variavel *v;
+	for (p=l; p!= NULL; p=p->prox){
+		
+		if(p->tipo ==0){
+			v = (Variavel*)p->info;
+			if(v->usada == 0)
+				printf("Variavel %s nao utilizada.\n",v->nome);	
+		}
+	}
+}
+
+int get_tipo(Lista* l){
+	Variavel *v;
+	v=(Variavel*)l->info;
+	return v->tipo;
+}
 /*void main (void){
 	int i;
 	Lista* l;

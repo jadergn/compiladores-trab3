@@ -15,7 +15,7 @@ fim-variáveis
 início
 	imprima("Digita seu nome:");
 	nome := leia();
-    	a1a := 1;
+    	a1a := idade;
     	idade := leia();
 	//a1a :=10;
 	//operador SE / ENTÃO / SENÃO

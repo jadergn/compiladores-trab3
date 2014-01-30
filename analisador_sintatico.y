@@ -8,6 +8,7 @@ Lista *var;
 extern int tipo;
 extern char * yytext;
 extern char identificador[100];
+extern int num_linha;
 %}
 
 /*%error-verbose*/
@@ -101,7 +102,7 @@ extern char identificador[100];
 
 
 algoritmo
-: declaracao_algoritmo bloco_variaveis bloco_inicio declacarao_funcoes
+: declaracao_algoritmo bloco_variaveis declacarao_funcoes bloco_inicio 
 | declaracao_algoritmo bloco_variaveis bloco_inicio
 ;
 
@@ -128,6 +129,11 @@ declaracao_variaveis
 {
 	//printf("primeiro\n");
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
+	if(tab_variaveis == NULL){
+		printf("Erro semantico na linha %d. Variavel redeclarada.\n",num_linha);
+		exit(0);
+	}
+	//printf ("identificador= %s\n",identificador);	
 	libera(var);
 	var = inicializa();
 	
@@ -136,6 +142,11 @@ declaracao_variaveis
 {
 	//printf("segundo\n");
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
+	if(tab_variaveis == NULL){
+		printf("Erro semantico na linha %d. Variavel redeclarada.\n",num_linha);
+		exit(0);
+	}
+	//printf ("identificador= %s\n",identificador);
 	libera(var);
 	var = inicializa();
 	
@@ -189,6 +200,9 @@ tipo_primitivo_plural
 /*bloco inicio pode ser vazio*/
 bloco_inicio
 : token_pr_inicio lista_comandos token_pr_fim
+{
+	verifica_variavel_usada(tab_variaveis);
+}
 | token_pr_inicio token_pr_fim
 ;
 
@@ -213,14 +227,14 @@ valor_esquerda
 {
 	//verifica se as variaveis que estao recebendo atribuicao foram declaradas, se sim usada=1
 	var =busca(tab_variaveis,identificador); 
-	if(var ==NULL){
-		printf("Variavel nao declarada-> %s!!\n",identificador);
+	if(var == NULL){
+		printf("Erro semantico na linha %d. Variavel nao declarada.\n",num_linha);
+		exit(0);
 		
 	}else{
 		set_usada(var);
-		//printf("Variavel declarada-> %s!!\n",identificador);
 	}
-	imprime_hash(tab_variaveis);
+	//imprime_hash(tab_variaveis);
 	
 }
 | token_identificador matriz_colchetes
@@ -332,6 +346,17 @@ termo_9
 | token_nao termo_9
 | token_abre_parenteses expressao token_fecha_parenteses
 | token_identificador
+{
+	var =busca(tab_variaveis,identificador); 
+	if(var == NULL){
+		printf("Erro semantico na linha %d. Variavel nao declarada.\n",num_linha);
+		exit(0);
+		
+	}else{
+		set_usada(var);
+		//printf("Variavel declarada-> %s!!\n",identificador);
+	}
+}
 | valor_primitivo
 | chamada_funcao
 | chamada_funcao_interna
