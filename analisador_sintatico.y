@@ -113,7 +113,11 @@ declaracao_algoritmo
 bloco_variaveis
 : token_pr_variaveis declaracao_variaveis token_pr_fim_variaveis
 {
-	//imprime(var);
+	
+	/*if(busca(tab_variaveis,"a1a")!=NULL)
+		imprime(busca(tab_variaveis,"a1a"));
+	else
+		printf("Nao encontrado\n");*/	
 }
 | token_pr_variaveis token_pr_fim_variaveis
 |
@@ -122,15 +126,15 @@ bloco_variaveis
 declaracao_variaveis
 : lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
 {
-	printf("primeiro\n");
+	//printf("primeiro\n");
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
 	libera(var);
-	var = inicializa();	
+	var = inicializa();
+	
 }
 | declaracao_variaveis lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
 {
-	printf("segundo\n");
-	//sempre que entra aqui da Segmentation fault, na hr de inserir. So funciona se for declarado apenas uma linha de variaveis(que ai nao vai entrar aqui fica na regra acima) se tiver mais q uma da Segmentation fault
+	//printf("segundo\n");
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
 	libera(var);
 	var = inicializa();
@@ -206,6 +210,19 @@ comando
 
 valor_esquerda
 : token_identificador
+{
+	//verifica se as variaveis que estao recebendo atribuicao foram declaradas, se sim usada=1
+	var =busca(tab_variaveis,identificador); 
+	if(var ==NULL){
+		printf("Variavel nao declarada-> %s!!\n",identificador);
+		
+	}else{
+		set_usada(var);
+		//printf("Variavel declarada-> %s!!\n",identificador);
+	}
+	imprime_hash(tab_variaveis);
+	
+}
 | token_identificador matriz_colchetes
 ;
 

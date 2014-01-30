@@ -46,11 +46,6 @@ void imprime (Lista* l){
 	Lista* p;
 	Variavel *v;
 	Funcao *f;
-	/*if(l==NULL){
-		printf("vazio!!!");
-		exit(0);
-		}
-	printf("aqui\n");*/
 	for (p=l; p!= NULL; p=p->prox){
 		
 		if(p->tipo ==0){
@@ -72,25 +67,51 @@ int vazia (Lista* l){
 
 }
 
-Lista* busca (Lista* l, char c[]){
+Lista* busca (Lista** l, char nome[]){
 	Lista* p;
 	Variavel *v;
 	Funcao *f;
-	for(p=l; p!=NULL; p=p->prox){
+	char c;
+	int pos,i;	
+	pos=0;
+	c=nome[0];
+	//printf("nome = %s ",nome);
+	pos =pos+(int)c;
+	while(c!='\0'){
+		i++;	
+		c=nome[i];
+		pos=pos+(int)c;
+		
+	}
+	
+	pos = pos%TAM;
+	//printf("\npos = %d, nome = %s, TAM = %d\n",pos,nome,TAM);
+	for(p=l[pos]; p!=NULL; p=p->prox){
+		//v = (Variavel*)p->info;
+		//	printf("v= %s, tipo = %d\n",v->nome,v->tipo);
+			
 		if(p->tipo ==0){
 			v = (Variavel*)p->info;
-			if(strcmp(v->nome,c)==0){
+			//printf("v= %s, tipo = %d\n",v->nome,v->tipo);
+			if(strcmp(v->nome,nome)==0){
+				//printf("v= %s, tipo = %d\n",v->nome,v->tipo);
 				return p;			
 			}
 		}
-		else if(p->tipo ==1){
+		/*if(p->tipo ==1){
 			f = (Funcao*)p->info;
-			if(strcmp(f->nome,c)==0){
+			if(strcmp(f->nome,nome)==0){
 				return p;			
 			}		
-		}
+		}*/
 	}
 	return NULL;	
+}
+
+int set_usada (Lista *l){
+	Variavel *v;
+	v= (Variavel*)l->info;
+	v->usada =1; 
 }
 
 /*Lista* retira (Lista* l, char c){
@@ -153,10 +174,10 @@ Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo){
 		strcpy(nome,v->nome);
 		usada = v->usada;
 		escopo = 0;
-		//printf("--nome = %s\n",nome);
 		insere_variavel(h, nome, tipo, usada,escopo);
 		nome[0]='\0';
 	}
+	return h;
 }
 //insere uma variavel na tabela hash
 Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo){
@@ -164,11 +185,15 @@ Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo
 	char c;
 	Lista* novo = (Lista*) malloc(sizeof(Lista));
 	Variavel* var = (Variavel*) malloc (sizeof(Variavel));
-	var->nome = nome;
+	var->nome = (char*) malloc ((strlen(nome)+1)*sizeof(char));
+	strcpy(var->nome,nome);
+	if(busca(l,var->nome) != NULL){
+		printf("Erro variavel redeclarada -> %s!\n",nome);
+		return l;
+	}
 	var->tipo = tipo;
 	var->usada = usada;
 	var->escopo = escopo;
-	//printf("---------nome = %s\n",nome);
 	if(tipo == 0)
 		var->valor = (int*) malloc(sizeof(int));
 	else if(tipo == 1)
@@ -181,7 +206,6 @@ Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo
 		var->valor = (int*) malloc(sizeof(int));
 	novo->info = var;
 	novo->tipo = 0;
-	//printf("3\n");	
 	c =nome[i];
 	pos =pos+(int)c;
 	while(c!='\0'){
@@ -191,16 +215,10 @@ Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo
 	}
 	
 	pos = pos%TAM;
-	printf("4 - pos = %d nome = %s\n",pos,nome);
-	/*if(l[pos]==NULL)
-		printf("null nome =%s \n",nome); //nao ta indo o nome
-	else
-		printf("ok aqui!");	*/	
-	//O erro esta dando aqui qdo tenta acessar o l[pos], nao tenho ideia do que esta acontecendo
+	//printf("4 - pos = %d nome = %s\n",pos,nome);
 	novo->prox = l[pos];
 	
 	l[pos] = novo;
-	//printf("5\n");
 	return l;
 }
 

@@ -11,7 +11,7 @@ Lista* inicializa (void);
 Lista** inicializa_hash (void);
 void imprime (Lista* l);
 int vazia (Lista* l);
-Lista* busca (Lista* l, char c[]);
+Lista* busca (Lista** l, char c[]);
 Lista* insere_variavel_lista(Lista* l, char nome[], int usada);
 Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo);
 Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo);

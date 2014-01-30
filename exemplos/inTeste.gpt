@@ -7,32 +7,17 @@ algoritmo idade;
 
 //variáveis
 variáveis
-	idade,a,b,a1a: inteiro;
-	nome,g,h,i,j: literal;
-	k,l,m,n,aa1: real;
+	idade,a1a: inteiro;
+	nome: literal;
 fim-variáveis
 
 //inicio do programa
 início
 	imprima("Digita seu nome:");
 	nome := leia();
-    
-	imprima(nome, ", digite sua idade:");
-	idade := leia();
-
+    	a1a := 1;
+    	idade := leia();
+	//a1a :=10;
 	//operador SE / ENTÃO / SENÃO
 	imprima("Nome:", nome, " / Faixa etária: ", faixa_etaria(idade));
-fim
-
-função faixa_etaria(idade: inteiro) : literal
-início
-	se idade >= 18 então
-		se idade < 60 então
-			retorne "adulto";
-		senão
-			retorne "idoso";
-		fim-se
-	senão
-		retorne "jovem";
-	fim-se
 fim
