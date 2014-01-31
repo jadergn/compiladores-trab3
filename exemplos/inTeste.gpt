@@ -13,11 +13,9 @@ fim-variáveis
 
 //inicio do programa
 início
-	imprima("Digita seu nome:");
-	nome := leia();
     	a1a := idade;
     	idade := leia();
-	//a1a :=10;
+	a1a := idade + nome;
 	//operador SE / ENTÃO / SENÃO
 	imprima("Nome:", nome, " / Faixa etária: ", faixa_etaria(idade));
 fim

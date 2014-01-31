@@ -93,6 +93,37 @@ Lista* busca (Lista** l, char nome[]){
 	}
 	return NULL;	
 }
+int verifica_tipo(Lista** h, char expressao[]){
+	char var[40];
+	int i=1,j=0,tipo=-1;
+	Lista* l;
+	Variavel* v;
+	while(expressao[i]!='\0'){
+		while(expressao[i]!='-' && expressao[i]!='\0'){
+			var[j] = expressao[i];
+			i++;
+			j++;
+			//printf("%c\n",expressao[i]);
+		}
+		i++;
+		var[j] = '\0';
+		j=0;
+		//printf("%s\n",var);
+		l = busca(h,var);
+		if(l!=NULL){
+			v = (Variavel*) l->info;
+			if(tipo == -1){
+				tipo = v->tipo;
+			}
+			else{
+				if (tipo != v->tipo)
+					return 0;
+			}
+			
+		}
+	}
+	return 1;
+}
 
 int set_usada (Lista *l){
 	Variavel *v;

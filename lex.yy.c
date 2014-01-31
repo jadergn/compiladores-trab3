@@ -683,11 +683,13 @@ char *yytext;
 #include "hash.h"
 int i = 0;
 int num_linha = 1;
+char c;
 char comentario[2000];
 char identificador[100];
+char expressao[2000];
 int tipo;
 
-#line 691 "lex.yy.c"
+#line 693 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -874,12 +876,12 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 13 "analisador_lexico.l"
+#line 15 "analisador_lexico.l"
 
 
 
 
-#line 883 "lex.yy.c"
+#line 885 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -964,419 +966,433 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 17 "analisador_lexico.l"
+#line 19 "analisador_lexico.l"
 {return token_pr_algoritmo;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 18 "analisador_lexico.l"
+#line 20 "analisador_lexico.l"
 {return token_pr_variaveis;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 19 "analisador_lexico.l"
+#line 21 "analisador_lexico.l"
 {return token_pr_fim_variaveis;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 20 "analisador_lexico.l"
+#line 22 "analisador_lexico.l"
 {return token_pr_inicio;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 21 "analisador_lexico.l"
+#line 23 "analisador_lexico.l"
 {return token_pr_fim;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 22 "analisador_lexico.l"
+#line 24 "analisador_lexico.l"
 {tipo = 0; return token_pr_inteiro;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 23 "analisador_lexico.l"
+#line 25 "analisador_lexico.l"
 {return token_pr_inteiros;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 24 "analisador_lexico.l"
+#line 26 "analisador_lexico.l"
 {tipo = 1; return token_pr_caractere;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 25 "analisador_lexico.l"
+#line 27 "analisador_lexico.l"
 {return token_pr_caracteres;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 26 "analisador_lexico.l"
+#line 28 "analisador_lexico.l"
 {tipo = 3; return token_pr_real;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 27 "analisador_lexico.l"
+#line 29 "analisador_lexico.l"
 {return token_pr_reais;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 28 "analisador_lexico.l"
+#line 30 "analisador_lexico.l"
 {tipo = 2; return token_pr_literal;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 29 "analisador_lexico.l"
+#line 31 "analisador_lexico.l"
 {return token_pr_literais;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 30 "analisador_lexico.l"
+#line 32 "analisador_lexico.l"
 {return token_pr_logico;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 31 "analisador_lexico.l"
+#line 33 "analisador_lexico.l"
 {return token_pr_logicos;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 32 "analisador_lexico.l"
+#line 34 "analisador_lexico.l"
 {return token_pr_matriz;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 33 "analisador_lexico.l"
+#line 35 "analisador_lexico.l"
 {return token_pr_se;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 34 "analisador_lexico.l"
+#line 36 "analisador_lexico.l"
 {return token_pr_entao;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 35 "analisador_lexico.l"
+#line 37 "analisador_lexico.l"
 {return token_pr_senao;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 36 "analisador_lexico.l"
+#line 38 "analisador_lexico.l"
 {return token_pr_fim_se;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 37 "analisador_lexico.l"
+#line 39 "analisador_lexico.l"
 {return token_pr_para;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 38 "analisador_lexico.l"
+#line 40 "analisador_lexico.l"
 {return token_pr_de;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 39 "analisador_lexico.l"
+#line 41 "analisador_lexico.l"
 {return token_pr_ate;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 40 "analisador_lexico.l"
+#line 42 "analisador_lexico.l"
 {return token_pr_faca;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 41 "analisador_lexico.l"
+#line 43 "analisador_lexico.l"
 {return token_pr_fim_para;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 42 "analisador_lexico.l"
+#line 44 "analisador_lexico.l"
 {return token_pr_passo;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 43 "analisador_lexico.l"
+#line 45 "analisador_lexico.l"
 {return token_pr_enquanto;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 44 "analisador_lexico.l"
+#line 46 "analisador_lexico.l"
 {return token_pr_fim_enquanto;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 45 "analisador_lexico.l"
+#line 47 "analisador_lexico.l"
 {return token_pr_imprima;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 46 "analisador_lexico.l"
+#line 48 "analisador_lexico.l"
 {return token_pr_leia;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 47 "analisador_lexico.l"
+#line 49 "analisador_lexico.l"
 {return token_pr_funcao;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 48 "analisador_lexico.l"
+#line 50 "analisador_lexico.l"
 {return token_pr_retorne;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 49 "analisador_lexico.l"
+#line 51 "analisador_lexico.l"
 {return token_pr_verdadeiro;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 50 "analisador_lexico.l"
+#line 52 "analisador_lexico.l"
 {return token_pr_falso;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 51 "analisador_lexico.l"
+#line 53 "analisador_lexico.l"
 {return token_pr_e;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 52 "analisador_lexico.l"
+#line 54 "analisador_lexico.l"
 {return token_pr_ou;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 54 "analisador_lexico.l"
+#line 56 "analisador_lexico.l"
 {return token_pr_escolha;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 55 "analisador_lexico.l"
+#line 57 "analisador_lexico.l"
 {return token_pr_caso;}	
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 56 "analisador_lexico.l"
+#line 58 "analisador_lexico.l"
 {return token_pr_fim_escolha;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 57 "analisador_lexico.l"
+#line 59 "analisador_lexico.l"
 {return token_pr_default;}
 	YY_BREAK
 case 41:
-#line 61 "analisador_lexico.l"
-case 42:
-#line 62 "analisador_lexico.l"
-case 43:
 #line 63 "analisador_lexico.l"
+case 42:
+#line 64 "analisador_lexico.l"
+case 43:
+#line 65 "analisador_lexico.l"
 case 44:
 YY_RULE_SETUP
-#line 63 "analisador_lexico.l"
+#line 65 "analisador_lexico.l"
 {return token_inteiro;}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 64 "analisador_lexico.l"
+#line 66 "analisador_lexico.l"
 {return token_real;}
 	YY_BREAK
 case 46:
 /* rule 46 can match eol */
 YY_RULE_SETUP
-#line 65 "analisador_lexico.l"
+#line 67 "analisador_lexico.l"
 {return token_caractere;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 66 "analisador_lexico.l"
+#line 68 "analisador_lexico.l"
 {return token_literal;}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 67 "analisador_lexico.l"
+#line 69 "analisador_lexico.l"
 {return token_soma;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 68 "analisador_lexico.l"
+#line 70 "analisador_lexico.l"
 {return token_subtracao;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 69 "analisador_lexico.l"
+#line 71 "analisador_lexico.l"
 {return token_divisao;}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 70 "analisador_lexico.l"
+#line 72 "analisador_lexico.l"
 {return token_multiplicacao;}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 71 "analisador_lexico.l"
+#line 73 "analisador_lexico.l"
 {return token_incrementador;}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 72 "analisador_lexico.l"
+#line 74 "analisador_lexico.l"
 {return token_modulo;}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 73 "analisador_lexico.l"
+#line 75 "analisador_lexico.l"
 {return token_maior;}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 74 "analisador_lexico.l"
+#line 76 "analisador_lexico.l"
 {return token_maior_igual;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 75 "analisador_lexico.l"
+#line 77 "analisador_lexico.l"
 {return token_menor;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 76 "analisador_lexico.l"
+#line 78 "analisador_lexico.l"
 {return token_menor_igual;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 77 "analisador_lexico.l"
+#line 79 "analisador_lexico.l"
 {return token_igual;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 78 "analisador_lexico.l"
+#line 80 "analisador_lexico.l"
 {return token_diferente;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 79 "analisador_lexico.l"
+#line 81 "analisador_lexico.l"
 {return token_e;}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 80 "analisador_lexico.l"
+#line 82 "analisador_lexico.l"
 {return token_e_bit;}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 81 "analisador_lexico.l"
+#line 83 "analisador_lexico.l"
 {return token_ou;}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 82 "analisador_lexico.l"
+#line 84 "analisador_lexico.l"
 {return token_ou_bit;}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 83 "analisador_lexico.l"
+#line 85 "analisador_lexico.l"
 {return token_xor_bit;}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 84 "analisador_lexico.l"
+#line 86 "analisador_lexico.l"
 {return token_nao;}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 85 "analisador_lexico.l"
+#line 87 "analisador_lexico.l"
 {return token_til;}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 86 "analisador_lexico.l"
+#line 88 "analisador_lexico.l"
 {return token_aspas_dupla;}
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 87 "analisador_lexico.l"
+#line 89 "analisador_lexico.l"
 {return token_aspas_simples;}
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 88 "analisador_lexico.l"
+#line 90 "analisador_lexico.l"
 {return token_abre_parenteses;}
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 89 "analisador_lexico.l"
+#line 91 "analisador_lexico.l"
 {return token_fecha_parenteses;}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 90 "analisador_lexico.l"
+#line 92 "analisador_lexico.l"
 {return token_abre_chaves;}
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 91 "analisador_lexico.l"
+#line 93 "analisador_lexico.l"
 {return token_fecha_chaves;}
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 92 "analisador_lexico.l"
+#line 94 "analisador_lexico.l"
 {return token_abre_colchetes;}
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 93 "analisador_lexico.l"
+#line 95 "analisador_lexico.l"
 {return token_fecha_colchetes;}
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 94 "analisador_lexico.l"
+#line 96 "analisador_lexico.l"
 {return token_tralha;}
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 95 "analisador_lexico.l"
+#line 97 "analisador_lexico.l"
 {return token_contra_barra;}
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 96 "analisador_lexico.l"
+#line 98 "analisador_lexico.l"
 {return token_ponto;}
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 97 "analisador_lexico.l"
+#line 99 "analisador_lexico.l"
 {return token_virgula;}
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 98 "analisador_lexico.l"
+#line 100 "analisador_lexico.l"
 {return token_ponto_virgula;}
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 99 "analisador_lexico.l"
+#line 101 "analisador_lexico.l"
 {return token_dois_pontos;}
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 100 "analisador_lexico.l"
+#line 102 "analisador_lexico.l"
 {return token_atribuicao;}
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 101 "analisador_lexico.l"
+#line 103 "analisador_lexico.l"
 {
 	strcpy(identificador,yytext);	
+	
+	
+	//printf(" %d\n",strlen(expressao));
+	expressao[strlen(expressao)] = '-';
+	i=0;
+	c = yytext[i];
+	while(c!='\0'){
+		expressao[strlen(expressao)] = c;
+		i++;
+	//	printf("%c",c);
+		c = yytext[i];
+	}
+	expressao[strlen(expressao)]='\0';
+	//printf(" %d %s\n",strlen(expressao),expressao);
 	return token_identificador;
 } 
 	YY_BREAK
 case 83:
 /* rule 83 can match eol */
 YY_RULE_SETUP
-#line 106 "analisador_lexico.l"
+#line 122 "analisador_lexico.l"
 {num_linha++;}
 	YY_BREAK
 case 84:
 /* rule 84 can match eol */
 YY_RULE_SETUP
-#line 107 "analisador_lexico.l"
+#line 123 "analisador_lexico.l"
 {
 	strcpy(comentario,yytext);
 	for(i=0; i<strlen(comentario); i++){
@@ -1387,26 +1403,26 @@ YY_RULE_SETUP
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 115 "analisador_lexico.l"
+#line 131 "analisador_lexico.l"
 ;
 	YY_BREAK
 case 86:
 /* rule 86 can match eol */
 YY_RULE_SETUP
-#line 116 "analisador_lexico.l"
+#line 132 "analisador_lexico.l"
 {num_linha++;}
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 118 "analisador_lexico.l"
+#line 134 "analisador_lexico.l"
 {return token_desconhecido;}
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 120 "analisador_lexico.l"
+#line 136 "analisador_lexico.l"
 ECHO;
 	YY_BREAK
-#line 1410 "lex.yy.c"
+#line 1426 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2404,7 +2420,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 120 "analisador_lexico.l"
+#line 136 "analisador_lexico.l"
 
 
 

@@ -5,10 +5,12 @@
 Lista ** tab_variaveis;
 Lista *var;
 
+int i;
 extern int tipo;
 extern char * yytext;
 extern char identificador[100];
 extern int num_linha;
+extern char expressao[2000];
 %}
 
 /*%error-verbose*/
@@ -213,6 +215,12 @@ lista_comandos
 
 comando
 : atribuicao
+{
+	if(!verifica_tipo(tab_variaveis,expressao))
+		printf("Erro semantico na linha %d. Tipo invalido associado a variavel.\n",num_linha);
+
+	//printf("at %s\n",expressao);
+}
 | chamada_funcao token_ponto_virgula
 | chamada_funcao_interna
 | comando_retorne
@@ -234,6 +242,11 @@ valor_esquerda
 	}else{
 		set_usada(var);
 	}
+	for(i-0;i<2000;i++){
+		expressao[i]='\0';
+	}
+	//printf("%s\n",identificador);
+	
 	//imprime_hash(tab_variaveis);
 	
 }
@@ -242,6 +255,11 @@ valor_esquerda
 
 atribuicao
 : valor_esquerda token_atribuicao expressao token_ponto_virgula
+{
+//printf("%s\n",identificador);
+//printf("%s\n",expressao);
+
+}
 ;
 
 comando_retorne
@@ -356,6 +374,7 @@ termo_9
 		set_usada(var);
 		//printf("Variavel declarada-> %s!!\n",identificador);
 	}
+	//printf("%s\n",expressao);
 }
 | valor_primitivo
 | chamada_funcao

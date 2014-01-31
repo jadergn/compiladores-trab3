@@ -74,14 +74,16 @@
 Lista ** tab_variaveis;
 Lista *var;
 
+int i;
 extern int tipo;
 extern char * yytext;
 extern char identificador[100];
 extern int num_linha;
+extern char expressao[2000];
 
 
 /* Line 268 of yacc.c  */
-#line 85 "analisador_sintatico.tab.c"
+#line 87 "analisador_sintatico.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -206,7 +208,7 @@ typedef int YYSTYPE;
 
 
 /* Line 343 of yacc.c  */
-#line 210 "analisador_sintatico.tab.c"
+#line 212 "analisador_sintatico.tab.c"
 
 #ifdef short
 # undef short
@@ -549,18 +551,18 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   105,   105,   106,   110,   115,   123,   124,   128,   141,
-     157,   158,   162,   168,   176,   177,   178,   179,   180,   184,
-     188,   189,   193,   194,   195,   196,   197,   202,   206,   210,
-     211,   215,   216,   217,   218,   219,   220,   221,   222,   226,
-     240,   244,   248,   249,   254,   258,   259,   263,   264,   265,
-     270,   271,   275,   279,   280,   284,   285,   286,   290,   291,
-     292,   296,   297,   298,   302,   303,   307,   308,   312,   313,
-     317,   318,   319,   323,   324,   325,   326,   327,   331,   332,
-     333,   337,   338,   339,   340,   344,   345,   346,   347,   348,
-     360,   361,   362,   366,   367,   368,   369,   370,   371,   375,
-     376,   380,   381,   385,   386,   390,   391,   395,   396,   400,
-     401,   405,   406,   410,   411
+       0,   107,   107,   108,   112,   117,   125,   126,   130,   143,
+     159,   160,   164,   170,   178,   179,   180,   181,   182,   186,
+     190,   191,   195,   196,   197,   198,   199,   204,   208,   212,
+     213,   217,   224,   225,   226,   227,   228,   229,   230,   234,
+     253,   257,   266,   267,   272,   276,   277,   281,   282,   283,
+     288,   289,   293,   297,   298,   302,   303,   304,   308,   309,
+     310,   314,   315,   316,   320,   321,   325,   326,   330,   331,
+     335,   336,   337,   341,   342,   343,   344,   345,   349,   350,
+     351,   355,   356,   357,   358,   362,   363,   364,   365,   366,
+     379,   380,   381,   385,   386,   387,   388,   389,   390,   394,
+     395,   399,   400,   404,   405,   409,   410,   414,   415,   419,
+     420,   424,   425,   429,   430
 };
 #endif
 
@@ -1709,7 +1711,7 @@ yyreduce:
         case 5:
 
 /* Line 1806 of yacc.c  */
-#line 116 "analisador_sintatico.y"
+#line 118 "analisador_sintatico.y"
     {
 	
 	/*if(busca(tab_variaveis,"a1a")!=NULL)
@@ -1722,7 +1724,7 @@ yyreduce:
   case 8:
 
 /* Line 1806 of yacc.c  */
-#line 129 "analisador_sintatico.y"
+#line 131 "analisador_sintatico.y"
     {
 	//printf("primeiro\n");
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
@@ -1740,7 +1742,7 @@ yyreduce:
   case 9:
 
 /* Line 1806 of yacc.c  */
-#line 142 "analisador_sintatico.y"
+#line 144 "analisador_sintatico.y"
     {
 	//printf("segundo\n");
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
@@ -1758,7 +1760,7 @@ yyreduce:
   case 12:
 
 /* Line 1806 of yacc.c  */
-#line 163 "analisador_sintatico.y"
+#line 165 "analisador_sintatico.y"
     {
 	var = insere_variavel_lista(var,identificador,0);
 			
@@ -1769,7 +1771,7 @@ yyreduce:
   case 13:
 
 /* Line 1806 of yacc.c  */
-#line 169 "analisador_sintatico.y"
+#line 171 "analisador_sintatico.y"
     {
 	var = insere_variavel_lista(var,identificador,0);
 	//printf("%s\n",identificador);
@@ -1779,16 +1781,28 @@ yyreduce:
   case 27:
 
 /* Line 1806 of yacc.c  */
-#line 203 "analisador_sintatico.y"
+#line 205 "analisador_sintatico.y"
     {
 	verifica_variavel_usada(tab_variaveis);
+}
+    break;
+
+  case 31:
+
+/* Line 1806 of yacc.c  */
+#line 218 "analisador_sintatico.y"
+    {
+	if(!verifica_tipo(tab_variaveis,expressao))
+		printf("Erro semantico na linha %d. Tipo invalido associado a variavel.\n",num_linha);
+
+	//printf("at %s\n",expressao);
 }
     break;
 
   case 39:
 
 /* Line 1806 of yacc.c  */
-#line 227 "analisador_sintatico.y"
+#line 235 "analisador_sintatico.y"
     {
 	//verifica se as variaveis que estao recebendo atribuicao foram declaradas, se sim usada=1
 	var =busca(tab_variaveis,identificador); 
@@ -1799,15 +1813,31 @@ yyreduce:
 	}else{
 		set_usada(var);
 	}
+	for(i-0;i<2000;i++){
+		expressao[i]='\0';
+	}
+	//printf("%s\n",identificador);
+	
 	//imprime_hash(tab_variaveis);
 	
+}
+    break;
+
+  case 41:
+
+/* Line 1806 of yacc.c  */
+#line 258 "analisador_sintatico.y"
+    {
+//printf("%s\n",identificador);
+//printf("%s\n",expressao);
+
 }
     break;
 
   case 89:
 
 /* Line 1806 of yacc.c  */
-#line 349 "analisador_sintatico.y"
+#line 367 "analisador_sintatico.y"
     {
 	var =busca(tab_variaveis,identificador); 
 	if(var == NULL){
@@ -1818,13 +1848,14 @@ yyreduce:
 		set_usada(var);
 		//printf("Variavel declarada-> %s!!\n",identificador);
 	}
+	//printf("%s\n",expressao);
 }
     break;
 
 
 
 /* Line 1806 of yacc.c  */
-#line 1828 "analisador_sintatico.tab.c"
+#line 1859 "analisador_sintatico.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2055,7 +2086,7 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 416 "analisador_sintatico.y"
+#line 435 "analisador_sintatico.y"
 
 
 #include "lex.yy.c"

@@ -4,8 +4,10 @@
 #include "hash.h"
 int i = 0;
 int num_linha = 1;
+char c;
 char comentario[2000];
 char identificador[100];
+char expressao[2000];
 int tipo;
 
 %}
@@ -100,6 +102,20 @@ default			{return token_pr_default;}
 ":="						{return token_atribuicao;}
 [a-zA-Z_][a-zA-Z0-9_]*		{
 	strcpy(identificador,yytext);	
+	
+	
+	//printf(" %d\n",strlen(expressao));
+	expressao[strlen(expressao)] = '-';
+	i=0;
+	c = yytext[i];
+	while(c!='\0'){
+		expressao[strlen(expressao)] = c;
+		i++;
+	//	printf("%c",c);
+		c = yytext[i];
+	}
+	expressao[strlen(expressao)]='\0';
+	//printf(" %d %s\n",strlen(expressao),expressao);
 	return token_identificador;
 } 
 
