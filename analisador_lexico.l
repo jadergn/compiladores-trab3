@@ -45,7 +45,12 @@ passo 			{return token_pr_passo;}
 enquanto 		{return token_pr_enquanto;}
 fim-enquanto 		{return token_pr_fim_enquanto;}
 imprima 		{return token_pr_imprima;}
+imprima_ln 		{return token_pr_imprima_ln;}
 leia 			{return token_pr_leia;}
+leia_ln			{return token_pr_leia_ln;}
+maximo			{return token_pr_maximo;}
+minimo			{return token_pr_minimo;}
+media			{return token_pr_media;}
 função 			{return token_pr_funcao;}
 retorne 		{return token_pr_retorne;}
 verdadeiro		{return token_pr_verdadeiro;}
@@ -101,21 +106,17 @@ default			{return token_pr_default;}
 ":"							{return token_dois_pontos;}
 ":="						{return token_atribuicao;}
 [a-zA-Z_][a-zA-Z0-9_]*		{
+	
 	strcpy(identificador,yytext);	
-	
-	
-	//printf(" %d\n",strlen(expressao));
 	expressao[strlen(expressao)] = '-';
 	i=0;
 	c = yytext[i];
 	while(c!='\0'){
 		expressao[strlen(expressao)] = c;
 		i++;
-	//	printf("%c",c);
 		c = yytext[i];
 	}
 	expressao[strlen(expressao)]='\0';
-	//printf(" %d %s\n",strlen(expressao),expressao);
 	return token_identificador;
 } 
 

@@ -16,7 +16,7 @@ struct variavel{
 
 struct funcao{
 	char *nome;
-	int retorno; // inteiro=0, caracter=1, string=2, real=3, booleano =4
+	int retorno; // inteiro=0, caracter=1, string=2, real=3, booleano =4, void = -1
 	int  aridade; 
 };
 
@@ -51,7 +51,7 @@ int vazia (Lista* l){
 		return 0;
 
 }
-
+//Busca uma variavel ou fum funcao na tabela hash, caso nao encontre retorna NULL
 Lista* busca (Lista** l, char nome[]){
 	Lista* p;
 	Variavel *v;
@@ -60,7 +60,6 @@ Lista* busca (Lista** l, char nome[]){
 	int pos,i;	
 	pos=0;
 	c=nome[0];
-	//printf("nome = %s ",nome);
 	pos =pos+(int)c;
 	i=1;
 	while(c!='\0'){
@@ -71,44 +70,39 @@ Lista* busca (Lista** l, char nome[]){
 	}
 	
 	pos = pos%TAM;
-	//printf("\npos = %d, nome = %s, TAM = %d\n",pos,nome,TAM);
 	for(p=l[pos]; p!=NULL; p=p->prox){
-		//v = (Variavel*)p->info;
-		//	printf("v= %s, tipo = %d\n",v->nome,v->tipo);
-			
 		if(p->tipo ==0){
 			v = (Variavel*)p->info;
-			//printf("v= %s, tipo = %d\n",v->nome,v->tipo);
 			if(strcmp(v->nome,nome)==0){
-				//printf("v= %s, tipo = %d\n",v->nome,v->tipo);
 				return p;			
 			}
 		}
-		/*if(p->tipo ==1){
+		if(p->tipo ==1){
 			f = (Funcao*)p->info;
 			if(strcmp(f->nome,nome)==0){
 				return p;			
 			}		
-		}*/
+		}
 	}
 	return NULL;	
 }
+//dada uma hash e uma expressao verifica se o tipo das variaveis da expressao sao compativeis
 int verifica_tipo(Lista** h, char expressao[]){
 	char var[40];
 	int i=1,j=0,tipo=-1;
 	Lista* l;
 	Variavel* v;
 	while(expressao[i]!='\0'){
+		//separa cada variavel na expressao
 		while(expressao[i]!='-' && expressao[i]!='\0'){
 			var[j] = expressao[i];
 			i++;
 			j++;
-			//printf("%c\n",expressao[i]);
 		}
 		i++;
 		var[j] = '\0';
 		j=0;
-		//printf("%s\n",var);
+		//busca a variavel na tabela de variaveis
 		l = busca(h,var);
 		if(l!=NULL){
 			v = (Variavel*) l->info;
@@ -116,12 +110,14 @@ int verifica_tipo(Lista** h, char expressao[]){
 				tipo = v->tipo;
 			}
 			else{
+				//se tiver algum tipo diferente retorna 0
 				if (tipo != v->tipo)
 					return 0;
 			}
 			
 		}
 	}
+	//se todos os tipos forem iguais retorna 1
 	return 1;
 }
 
@@ -130,28 +126,6 @@ int set_usada (Lista *l){
 	v= (Variavel*)l->info;
 	v->usada =1; 
 }
-
-/*Lista* retira (Lista* l, char c){
-	Lista* ant = NULL;
-	Lista* p = l;
-
-	while (p!=NULL && p->info != c){
-		ant = p;
-		p=p->prox;
-	}
-	if (p==NULL)
-		return l;
-	if(ant == NULL){
-		l = p->prox;
-	
-	}
-	else{
-		ant->prox = p->prox;
-		
-	}
-	free(p);
-	return l;
-}*/
 
 void libera (Lista* l){
 	Lista* p=l;
@@ -178,7 +152,7 @@ Lista* insere_variavel_lista(Lista* l, char nome[], int usada){
 	l = novo;
 	return l;
 }
-//insere uma lista de variavel na tabela hash
+//insere uma lista de variaveis na tabela hash
 Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo){
 	Lista* p;
 	Variavel* v = (Variavel*) malloc (sizeof(Variavel));;
@@ -233,15 +207,14 @@ Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo
 	}
 	
 	pos = pos%TAM;
-	//printf("4 - pos = %d nome = %s\n",pos,nome);
 	novo->prox = l[pos];
 	
 	l[pos] = novo;
 	return l;
 }
 
-//insere a variavel em uma lista
-Lista* insere_funcao_lista(Lista* l, char nome[], int usada){
+//insere a funcao em uma lista
+Lista* insere_funcao_lista(Lista* l, char nome[]){
 	Lista* novo = (Lista*) malloc(sizeof(Lista));
 	Funcao* func = (Funcao*) malloc (sizeof(Funcao));
 	func->nome = (char*) malloc ((strlen(nome)+1)*sizeof(char));
@@ -255,7 +228,7 @@ Lista* insere_funcao_lista(Lista* l, char nome[], int usada){
 	return l;
 }
 
-//insere uma lista de variavel na tabela hash
+//insere uma lista de funcoes na tabela hash
 Lista** insere_funcao_hash(Lista** h, Lista* l, int retorno, int aridade){
 	Lista* p;
 	Funcao* f = (Funcao*) malloc (sizeof(Funcao));;
@@ -274,7 +247,7 @@ Lista** insere_funcao_hash(Lista** h, Lista* l, int retorno, int aridade){
 	}
 	return h;
 }
-
+//insere uma funcao na tabela hash
 Lista** insere_funcao (Lista** l, char nome[], int retorno, int aridade){
 	int pos=0,i=0;
 	char c;
@@ -288,7 +261,7 @@ Lista** insere_funcao (Lista** l, char nome[], int retorno, int aridade){
 
 	c =nome[i];
 	pos =pos+(int)c;
-	while(c!='\n'){
+	while(c!='\0'){
 		i++;	
 		c=nome[i];
 		pos=pos+(int)c;
@@ -307,7 +280,7 @@ void imprime_hash(Lista** l){
 		}	
 	}
 }
-
+//imprime uma lista
 void imprime (Lista* l){
 	Lista* p;
 	Variavel *v;
@@ -324,17 +297,19 @@ void imprime (Lista* l){
 		
 	}
 }
-
+//percorre a hash verificando se todas as variaveis foram utilizadas
 void verifica_variavel_usada(Lista** l){
 	int i;
 	Lista* p;
 	Variavel *v;
 	for(i=0;i<TAM;i++){
 		if(l[i]!=NULL){
+			//para cada posicao da hash que eh uma lista chama verifica
 			verifica(l[i]);
 		}	
 	}
 }
+//percorre uma lista verificando se todas as variaveis foram utilizadas
 void verifica (Lista* l){
 	Lista* p;
 	Variavel *v;
@@ -343,45 +318,19 @@ void verifica (Lista* l){
 		if(p->tipo ==0){
 			v = (Variavel*)p->info;
 			if(v->usada == 0)
-				printf("Variavel %s nao utilizada.\n",v->nome);	
+				printf("Erro semantico. Variavel %s nao utilizada.\n",v->nome);	
 		}
 	}
 }
-
+//retorna o tipo da variavel
 int get_tipo(Lista* l){
 	Variavel *v;
 	v=(Variavel*)l->info;
 	return v->tipo;
 }
-// void main (void){
-// 	int i;
-// 	Lista* l;
-// 	Lista** v;
-	
-// 	v = inicializa_hash();
-		
-// 	// v = insere_variavel(v, "a1\n", "jader", 2, 0, 0);
-
-// 	v = insere_funcao(v, "func1\n", 0, 1);
-	
-// 	// v = insere_variavel(v, "a2\n","j",2, 0, 0);
-	
-// 	v = insere_funcao(v, "func2\n", 2, 1);
-	
-// 	// v = insere_variavel(v, "a3\n","ja",2, 0, 0);
-	
-// 	v = insere_funcao(v, "func3\n", 3, 1);
-	
-// 	// v = insere_variavel(v, "a4\n","jad",2, 0, 0);
-	
-// 	v = insere_funcao(v, "func1\n", 0, 1);
-	
-// 	// v = insere_variavel(v, "a5\n","jade",2, 0, 0);
-	
-// 	v = insere_funcao(v, "func5\n", 1, 1);	
-	
-// 	// v = insere_variavel(v, "a1\n", "jader", 2, 0, 0);
-	
-// 	imprime_hash(v);
-	
-// }
+//retorna a aridade da funcao
+int get_aridade(Lista* l){
+	Funcao *f;
+	f=(Funcao*)l->info;
+	return f->aridade;
+}

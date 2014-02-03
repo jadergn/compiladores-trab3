@@ -12,3 +12,4 @@ relatorio:
 clean:
 	rm -rf trab3 lex.yy.c analisador_sintatico.tab.c *~ hash.o
 	rm -rf trab3.log texput.log trab3.aux trab3.pdf 
+	rm -rf *.output
