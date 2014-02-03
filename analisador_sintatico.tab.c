@@ -71,8 +71,8 @@
 #include <stdio.h>
 #include "hash.h"
 
-Lista ** tab_variaveis;
-Lista *var;
+Lista **tab_variaveis, **tab_funcoes;
+Lista *var, *func;
 
 int i;
 extern int tipo;
@@ -551,18 +551,18 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   107,   107,   108,   112,   117,   125,   126,   130,   143,
-     159,   160,   164,   170,   178,   179,   180,   181,   182,   186,
-     190,   191,   195,   196,   197,   198,   199,   204,   208,   212,
-     213,   217,   224,   225,   226,   227,   228,   229,   230,   234,
-     253,   257,   266,   267,   272,   276,   277,   281,   282,   283,
-     288,   289,   293,   297,   298,   302,   303,   304,   308,   309,
-     310,   314,   315,   316,   320,   321,   325,   326,   330,   331,
-     335,   336,   337,   341,   342,   343,   344,   345,   349,   350,
-     351,   355,   356,   357,   358,   362,   363,   364,   365,   366,
-     379,   380,   381,   385,   386,   387,   388,   389,   390,   394,
-     395,   399,   400,   404,   405,   409,   410,   414,   415,   419,
-     420,   424,   425,   429,   430
+       0,   107,   107,   108,   112,   117,   125,   126,   130,   142,
+     158,   159,   163,   169,   177,   178,   179,   180,   181,   185,
+     189,   190,   194,   195,   196,   197,   198,   203,   207,   211,
+     212,   216,   223,   224,   225,   226,   227,   228,   229,   233,
+     252,   256,   265,   266,   271,   275,   276,   280,   281,   282,
+     287,   288,   292,   296,   297,   301,   302,   303,   307,   308,
+     309,   313,   314,   315,   319,   320,   324,   325,   329,   330,
+     334,   335,   336,   340,   341,   342,   343,   344,   348,   349,
+     350,   354,   355,   356,   357,   361,   362,   363,   364,   365,
+     378,   379,   392,   396,   397,   398,   399,   400,   401,   405,
+     406,   410,   411,   415,   416,   420,   424,   431,   442,   449,
+     450,   454,   455,   459,   460
 };
 #endif
 
@@ -1717,7 +1717,7 @@ yyreduce:
 	/*if(busca(tab_variaveis,"a1a")!=NULL)
 		imprime(busca(tab_variaveis,"a1a"));
 	else
-		printf("Nao encontrado\n");*/	
+		printf("Nao encontrado\n");*/
 }
     break;
 
@@ -1735,14 +1735,13 @@ yyreduce:
 	//printf ("identificador= %s\n",identificador);	
 	libera(var);
 	var = inicializa();
-	
 }
     break;
 
   case 9:
 
 /* Line 1806 of yacc.c  */
-#line 144 "analisador_sintatico.y"
+#line 143 "analisador_sintatico.y"
     {
 	//printf("segundo\n");
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
@@ -1760,7 +1759,7 @@ yyreduce:
   case 12:
 
 /* Line 1806 of yacc.c  */
-#line 165 "analisador_sintatico.y"
+#line 164 "analisador_sintatico.y"
     {
 	var = insere_variavel_lista(var,identificador,0);
 			
@@ -1771,7 +1770,7 @@ yyreduce:
   case 13:
 
 /* Line 1806 of yacc.c  */
-#line 171 "analisador_sintatico.y"
+#line 170 "analisador_sintatico.y"
     {
 	var = insere_variavel_lista(var,identificador,0);
 	//printf("%s\n",identificador);
@@ -1781,7 +1780,7 @@ yyreduce:
   case 27:
 
 /* Line 1806 of yacc.c  */
-#line 205 "analisador_sintatico.y"
+#line 204 "analisador_sintatico.y"
     {
 	verifica_variavel_usada(tab_variaveis);
 }
@@ -1790,7 +1789,7 @@ yyreduce:
   case 31:
 
 /* Line 1806 of yacc.c  */
-#line 218 "analisador_sintatico.y"
+#line 217 "analisador_sintatico.y"
     {
 	if(!verifica_tipo(tab_variaveis,expressao))
 		printf("Erro semantico na linha %d. Tipo invalido associado a variavel.\n",num_linha);
@@ -1802,7 +1801,7 @@ yyreduce:
   case 39:
 
 /* Line 1806 of yacc.c  */
-#line 235 "analisador_sintatico.y"
+#line 234 "analisador_sintatico.y"
     {
 	//verifica se as variaveis que estao recebendo atribuicao foram declaradas, se sim usada=1
 	var =busca(tab_variaveis,identificador); 
@@ -1826,7 +1825,7 @@ yyreduce:
   case 41:
 
 /* Line 1806 of yacc.c  */
-#line 258 "analisador_sintatico.y"
+#line 257 "analisador_sintatico.y"
     {
 //printf("%s\n",identificador);
 //printf("%s\n",expressao);
@@ -1837,7 +1836,7 @@ yyreduce:
   case 89:
 
 /* Line 1806 of yacc.c  */
-#line 367 "analisador_sintatico.y"
+#line 366 "analisador_sintatico.y"
     {
 	var =busca(tab_variaveis,identificador); 
 	if(var == NULL){
@@ -1852,10 +1851,71 @@ yyreduce:
 }
     break;
 
+  case 91:
+
+/* Line 1806 of yacc.c  */
+#line 380 "analisador_sintatico.y"
+    {
+	func = busca(tab_funcoes, identificador); 
+	if(func == NULL){
+		printf("Erro semantico na linha %d. Funcao nao declarada.\n",num_linha);
+		exit(0);
+		
+	} else {
+		set_usada(func);
+		printf("Funcao declarada-> %s!!\n",identificador);
+	}
+	//printf("%s\n",expressao);
+}
+    break;
+
+  case 105:
+
+/* Line 1806 of yacc.c  */
+#line 421 "analisador_sintatico.y"
+    {
+	//printf("declaracao de funcoes - ultima\n");
+}
+    break;
+
+  case 106:
+
+/* Line 1806 of yacc.c  */
+#line 425 "analisador_sintatico.y"
+    {
+	//printf("declaracao de funcoes - primeira\n");
+}
+    break;
+
+  case 107:
+
+/* Line 1806 of yacc.c  */
+#line 432 "analisador_sintatico.y"
+    {
+	tab_funcoes = insere_funcao_hash(tab_funcoes, func, tipo);
+	if(tab_funcoes == NULL){
+		printf("Erro semantico na linha %d. Funcao redeclarada.\n",num_linha);
+		exit(0);
+	}
+	//printf ("identificador= %s\n",identificador);	
+	libera(func);
+	func = inicializa();
+}
+    break;
+
+  case 108:
+
+/* Line 1806 of yacc.c  */
+#line 443 "analisador_sintatico.y"
+    {
+	//printf("declaracao de funcoes - sem parametros\n");
+}
+    break;
+
 
 
 /* Line 1806 of yacc.c  */
-#line 1859 "analisador_sintatico.tab.c"
+#line 1919 "analisador_sintatico.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2086,14 +2146,19 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 435 "analisador_sintatico.y"
+#line 465 "analisador_sintatico.y"
 
 
 #include "lex.yy.c"
 
 main(){
+	
 	tab_variaveis = inicializa_hash();
 	var = inicializa();
+	
+	tab_funcoes = inicializa_hash();
+	func = inicializa();
+	
 	yyparse();
 }
 

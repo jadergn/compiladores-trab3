@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include "hash.h"
 
-Lista ** tab_variaveis;
-Lista *var;
+Lista **tab_variaveis, **tab_funcoes;
+Lista *var, *func;
 
 int i;
 extern int tipo;
@@ -120,7 +120,7 @@ bloco_variaveis
 	/*if(busca(tab_variaveis,"a1a")!=NULL)
 		imprime(busca(tab_variaveis,"a1a"));
 	else
-		printf("Nao encontrado\n");*/	
+		printf("Nao encontrado\n");*/
 }
 | token_pr_variaveis token_pr_fim_variaveis
 |
@@ -138,7 +138,6 @@ declaracao_variaveis
 	//printf ("identificador= %s\n",identificador);	
 	libera(var);
 	var = inicializa();
-	
 }
 | declaracao_variaveis lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
 {
@@ -378,6 +377,18 @@ termo_9
 }
 | valor_primitivo
 | chamada_funcao
+{
+	func = busca(tab_funcoes, identificador); 
+	if(func == NULL){
+		printf("Erro semantico na linha %d. Funcao nao declarada.\n",num_linha);
+		exit(0);
+		
+	} else {
+		set_usada(func);
+		printf("Funcao declarada-> %s!!\n",identificador);
+	}
+	//printf("%s\n",expressao);
+}
 | chamada_funcao_interna
 ;
 
@@ -407,12 +418,31 @@ paramentros_chamada_funcao
 
 declacarao_funcoes
 : declacarao_funcoes declaracao_funcao
+{
+	//printf("declaracao de funcoes - ultima\n");
+}
 | declaracao_funcao
+{
+	//printf("declaracao de funcoes - primeira\n");
+}
 ;
 
 declaracao_funcao
 : token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio
+{
+	tab_funcoes = insere_funcao_hash(tab_funcoes, func, tipo);
+	if(tab_funcoes == NULL){
+		printf("Erro semantico na linha %d. Funcao redeclarada.\n",num_linha);
+		exit(0);
+	}
+	//printf ("identificador= %s\n",identificador);	
+	libera(func);
+	func = inicializa();
+}
 | token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_inicio
+{
+	//printf("declaracao de funcoes - sem parametros\n");
+}
 ;
 
 paramentros_funcao_parenteses
@@ -437,8 +467,13 @@ paramentro_funcao
 #include "lex.yy.c"
 
 main(){
+	
 	tab_variaveis = inicializa_hash();
 	var = inicializa();
+	
+	tab_funcoes = inicializa_hash();
+	func = inicializa();
+	
 	yyparse();
 }
 

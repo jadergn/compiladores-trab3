@@ -240,6 +240,41 @@ Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo
 	return l;
 }
 
+//insere a variavel em uma lista
+Lista* insere_funcao_lista(Lista* l, char nome[], int usada){
+	Lista* novo = (Lista*) malloc(sizeof(Lista));
+	Funcao* func = (Funcao*) malloc (sizeof(Funcao));
+	func->nome = (char*) malloc ((strlen(nome)+1)*sizeof(char));
+	strcpy(func->nome,nome);
+	func->retorno = -1;
+	func->aridade = -1;
+	novo->info = func;
+	novo->tipo = 1; // tipo == 1 é funcao
+	novo->prox = l;
+	l = novo;
+	return l;
+}
+
+//insere uma lista de variavel na tabela hash
+Lista** insere_funcao_hash(Lista** h, Lista* l, int retorno, int aridade){
+	Lista* p;
+	Funcao* f = (Funcao*) malloc (sizeof(Funcao));;
+	// int usada,escopo;
+	char nome[100];
+	
+	for(p = l; p != NULL; p = p->prox){
+		
+		f = (Funcao*)p->info;
+		strcpy(nome,f->nome);
+		// usada = f->usada;
+		// escopo = 0;
+		if(insere_funcao(h, nome, retorno, aridade) == NULL)
+			return NULL;
+		nome[0] = '\0';
+	}
+	return h;
+}
+
 Lista** insere_funcao (Lista** l, char nome[], int retorno, int aridade){
 	int pos=0,i=0;
 	char c;
@@ -318,27 +353,35 @@ int get_tipo(Lista* l){
 	v=(Variavel*)l->info;
 	return v->tipo;
 }
-/*void main (void){
-	int i;
-	Lista* l;
-	Lista** v;
+// void main (void){
+// 	int i;
+// 	Lista* l;
+// 	Lista** v;
 	
-	v = inicializa_hash();
+// 	v = inicializa_hash();
 		
-	v = insere_variavel(v,"a1\n","jader",2,0,0);
-	v = insere_funcao(v,"func1\n",0,1);
-	v = insere_variavel(v,"a2\n","j",2,0,0);
-	v = insere_funcao(v,"func2\n",0,1);
-	v = insere_variavel(v,"a3\n","ja",2,0,0);
-	v = insere_funcao(v,"func3\n",0,1);
-	v = insere_variavel(v,"a4\n","jad",2,0,0);
-	v = insere_funcao(v,"func1\n",0,1);
-	v = insere_variavel(v,"a5\n","jade",2,0,0);
-	v = insere_funcao(v,"func5\n",0,1);	
-	v = insere_variavel(v,"a1\n","jader",2,0,0);
+// 	// v = insere_variavel(v, "a1\n", "jader", 2, 0, 0);
 
-
+// 	v = insere_funcao(v, "func1\n", 0, 1);
 	
-	imprime_hash(v);
+// 	// v = insere_variavel(v, "a2\n","j",2, 0, 0);
 	
-}*/
+// 	v = insere_funcao(v, "func2\n", 2, 1);
+	
+// 	// v = insere_variavel(v, "a3\n","ja",2, 0, 0);
+	
+// 	v = insere_funcao(v, "func3\n", 3, 1);
+	
+// 	// v = insere_variavel(v, "a4\n","jad",2, 0, 0);
+	
+// 	v = insere_funcao(v, "func1\n", 0, 1);
+	
+// 	// v = insere_variavel(v, "a5\n","jade",2, 0, 0);
+	
+// 	v = insere_funcao(v, "func5\n", 1, 1);	
+	
+// 	// v = insere_variavel(v, "a1\n", "jader", 2, 0, 0);
+	
+// 	imprime_hash(v);
+	
+// }
