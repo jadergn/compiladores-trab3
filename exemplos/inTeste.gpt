@@ -16,4 +16,5 @@ início
     	a1a := 1 + idade;
 	a1a := 1;
 	a1a := maximo(a,idade);
+	nome := "jader";
 fim

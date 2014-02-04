@@ -16,8 +16,9 @@ struct variavel{
 
 struct funcao{
 	char *nome;
-	int retorno; // inteiro=0, caracter=1, string=2, real=3, booleano =4, void = -1
+	int  retorno; // inteiro=0, caracter=1, string=2, real=3, booleano =4, void = -1
 	int  aridade; 
+	int  tipo_parametros[10];//cada funcao pode ter no maximo 10 parametros
 };
 
 //tipo pode ser variavel=0 funcao=1
@@ -51,8 +52,8 @@ int vazia (Lista* l){
 		return 0;
 
 }
-//Busca uma variavel ou fum funcao na tabela hash, caso nao encontre retorna NULL
-Lista* busca (Lista** l, char nome[]){
+//Busca uma variavel ou fum funcao na tabela hash, caso nao encontre retorna NULL, foi necessario inserir escopo para a variavel, se for buscar funcao pode colocar quaquer coisa em escopo que nao tem problema, pois so sera usado para variaveis
+Lista* busca (Lista** l, char nome[], int escopo){
 	Lista* p;
 	Variavel *v;
 	Funcao *f;
@@ -73,7 +74,7 @@ Lista* busca (Lista** l, char nome[]){
 	for(p=l[pos]; p!=NULL; p=p->prox){
 		if(p->tipo ==0){
 			v = (Variavel*)p->info;
-			if(strcmp(v->nome,nome)==0){
+			if(strcmp(v->nome,nome)==0 && v->escopo==escopo){
 				return p;			
 			}
 		}
@@ -87,7 +88,7 @@ Lista* busca (Lista** l, char nome[]){
 	return NULL;	
 }
 //dada uma hash e uma expressao verifica se o tipo das variaveis da expressao sao compativeis
-int verifica_tipo(Lista** h, char expressao[]){
+int verifica_tipo(Lista** h, char expressao[], int escopo){
 	char var[40];
 	int i=1,j=0,tipo=-1;
 	Lista* l;
@@ -103,7 +104,7 @@ int verifica_tipo(Lista** h, char expressao[]){
 		var[j] = '\0';
 		j=0;
 		//busca a variavel na tabela de variaveis
-		l = busca(h,var);
+		l = busca(h,var, escopo);
 		if(l!=NULL){
 			v = (Variavel*) l->info;
 			if(tipo == -1){
@@ -153,10 +154,10 @@ Lista* insere_variavel_lista(Lista* l, char nome[], int usada){
 	return l;
 }
 //insere uma lista de variaveis na tabela hash
-Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo){
+Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo, int escopo){
 	Lista* p;
 	Variavel* v = (Variavel*) malloc (sizeof(Variavel));;
-	int usada,escopo;
+	int usada;
 	char nome[100];
 	
 	for(p=l;p!=NULL;p=p->prox){
@@ -164,7 +165,6 @@ Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo){
 		v = (Variavel*)p->info;
 		strcpy(nome,v->nome);
 		usada = v->usada;
-		escopo = 0;
 		if(insere_variavel(h, nome, tipo, usada,escopo) == NULL)
 			return NULL;
 		nome[0]='\0';
@@ -179,7 +179,7 @@ Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo
 	Variavel* var = (Variavel*) malloc (sizeof(Variavel));
 	var->nome = (char*) malloc ((strlen(nome)+1)*sizeof(char));
 	strcpy(var->nome,nome);
-	if(busca(l,var->nome) != NULL){
+	if(busca(l,var->nome,escopo) != NULL){
 		return NULL;
 	}
 	var->tipo = tipo;
@@ -231,21 +231,34 @@ Lista* insere_funcao_lista(Lista* l, char nome[]){
 //insere uma lista de funcoes na tabela hash
 Lista** insere_funcao_hash(Lista** h, Lista* l, int retorno, int aridade){
 	Lista* p;
-	Funcao* f = (Funcao*) malloc (sizeof(Funcao));;
-	// int usada,escopo;
+	Funcao* f = (Funcao*) malloc (sizeof(Funcao));
 	char nome[100];
 	
 	for(p = l; p != NULL; p = p->prox){
 		
 		f = (Funcao*)p->info;
 		strcpy(nome,f->nome);
-		// usada = f->usada;
-		// escopo = 0;
 		if(insere_funcao(h, nome, retorno, aridade) == NULL)
 			return NULL;
 		nome[0] = '\0';
 	}
 	return h;
+}
+//o vetor tipo_parametros tem q terminar com -1, que eh a para do while
+Lista** insere_parametro_funcao(Lista** h, char nome[], int tipo_parametros[]){
+	Lista *l;
+	Funcao* f;
+	int i=0;
+	l = busca(h,nome,0);
+	if(l!=NULL){
+		f = (Funcao*)l->info;
+		while(tipo_parametros[i]!=-1){
+			f->tipo_parametros[i]=tipo_parametros[i];
+			i++;
+		}
+		f->tipo_parametros[i]=-1;
+	}
+	
 }
 //insere uma funcao na tabela hash
 Lista** insere_funcao (Lista** l, char nome[], int retorno, int aridade){
@@ -285,6 +298,7 @@ void imprime (Lista* l){
 	Lista* p;
 	Variavel *v;
 	Funcao *f;
+	int i=0;
 	for (p=l; p!= NULL; p=p->prox){
 		
 		if(p->tipo ==0){
@@ -292,8 +306,14 @@ void imprime (Lista* l){
 			printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d \n",v->nome,v->tipo,v->usada,v->escopo);		
 		}else if(p->tipo ==1){
 			f = (Funcao*)p->info;
-			printf("Funcao: nome = %s retorno = %d aridade = %d\n",f->nome, f->retorno, f->aridade);		
+			printf("Funcao: nome = %s retorno = %d aridade = %d --",f->nome, f->retorno, f->aridade);		
+			while(f->tipo_parametros[i]!=-1){
+				printf(" %d",f->tipo_parametros[i]);
+				i++;
+			}
+			printf("\n");
 		}
+		i=0;
 		
 	}
 }

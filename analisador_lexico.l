@@ -4,6 +4,7 @@
 #include "hash.h"
 int i = 0;
 int num_linha = 1;
+int escopo;
 char c;
 char comentario[2000];
 char identificador[100];
@@ -17,7 +18,7 @@ int tipo;
 
 
 algoritmo 		{return token_pr_algoritmo;}
-variáveis 		{return token_pr_variaveis;}
+variáveis 		{escopo = 1;return token_pr_variaveis;}
 fim-variáveis 		{return token_pr_fim_variaveis;}
 início			{return token_pr_inicio;}
 fim 			{return token_pr_fim;}
@@ -51,7 +52,7 @@ leia_ln			{return token_pr_leia_ln;}
 maximo			{return token_pr_maximo;}
 minimo			{return token_pr_minimo;}
 media			{return token_pr_media;}
-função 			{return token_pr_funcao;}
+função 			{escopo = 0;return token_pr_funcao;}
 retorne 		{return token_pr_retorne;}
 verdadeiro		{return token_pr_verdadeiro;}
 falso			{return token_pr_falso;}

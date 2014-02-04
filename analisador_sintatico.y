@@ -7,11 +7,13 @@ Lista *var, *func;
 
 int i;
 int qtd_parametros;
+int tipo_parametros[10];
 extern int tipo;
 extern char * yytext;
 extern char identificador[100];
 extern int num_linha;
 extern char expressao[2000];
+extern int escopo;
 %}
 
 /*%error-verbose*/
@@ -110,8 +112,13 @@ extern char expressao[2000];
 
 
 algoritmo
-: declaracao_algoritmo bloco_variaveis declacarao_funcoes bloco_inicio 
+: declaracao_algoritmo declacarao_funcoes bloco_variaveis bloco_inicio 
 | declaracao_algoritmo bloco_variaveis bloco_inicio
+{
+	//imprime_hash(tab_variaveis);
+	//printf("\n\n##########################\n\n");
+	//imprime_hash(tab_funcoes);
+}
 ;
 
 declaracao_algoritmo
@@ -135,7 +142,7 @@ declaracao_variaveis
 : lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
 {
 	//insere a lista de variaveis(var) na tabela de variaveis(tab_variaveis), crio uma lista antes, pois so aqui fica sabendo do tipo das variaveis
-	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
+	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo,escopo);
 	//se retornar vazio foi pq tentou redeclarar uma variavel
 	if(tab_variaveis == NULL){
 		printf("Erro semantico na linha %d. Variavel redeclarada.\n",num_linha);
@@ -151,7 +158,7 @@ declaracao_variaveis
 | declaracao_variaveis lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
 {
 	//insere a lista de variaveis(var) na tabela de variaveis(tab_variaveis), cria uma lista antes pois so aqui fica sabendo do tipo das variaveis
-	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo);
+	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo,escopo);
 	//se retornar vazio foi pq tentou redeclarar uma variavel
 	if(tab_variaveis == NULL){
 		printf("Erro semantico na linha %d. Variavel redeclarada.\n",num_linha);
@@ -228,7 +235,7 @@ comando
 : atribuicao
 {
 	//o vetor expressao armazena toda a expressao a ser analizada, se tiver associacao de tipo invalido na expressao retorna o erro
-	if(!verifica_tipo(tab_variaveis,expressao)){
+	if(!verifica_tipo(tab_variaveis,expressao,escopo)){
 	
 		printf("Erro semantico na linha %d. Tipo invalido associado a variavel.\n",num_linha);
 		exit(0);
@@ -251,7 +258,7 @@ valor_esquerda
 : token_identificador
 {
 	//verifica se a variavel que estao recebendo atribuicao foi declarada, se sim usada=1, var=NULL nao foi encontrada a variavel, logo ela nao foi declarada
-	var =busca(tab_variaveis,identificador); 
+	var =busca(tab_variaveis,identificador, escopo); 
 	if(var == NULL){
 		printf("Erro semantico na linha %d. Variavel nao declarada.\n",num_linha);
 		exit(0);
@@ -372,7 +379,7 @@ termo_9
 | token_identificador
 {
 	//verifica se a variavel foi declarada
-	var =busca(tab_variaveis,identificador); 
+	var =busca(tab_variaveis,identificador, escopo); 
 	if(var == NULL){
 		printf("Erro semantico na linha %d. Variavel nao declarada.\n",num_linha);
 		exit(0);
@@ -403,8 +410,8 @@ chamada_funcao
 chamada_funcao_interna
 : token_pr_imprima token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
 {
-	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
-	func = busca(tab_funcoes,"imprima");
+	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela, em funcoes o escopo precisa ser colocado mas nao eh usado
+	func = busca(tab_funcoes,"imprima",escopo);
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Numero de argumentos da funcao imprima.\n",num_linha);
 		exit(0);
@@ -414,7 +421,7 @@ chamada_funcao_interna
 | token_pr_leia token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
-	func = busca(tab_funcoes,"leia");
+	func = busca(tab_funcoes,"leia",escopo);
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Numero de argumentos da funcao leia.\n",num_linha);
 		exit(0);
@@ -424,7 +431,7 @@ chamada_funcao_interna
 | token_pr_leia_ln token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
-	func = busca(tab_funcoes,"leia_ln");
+	func = busca(tab_funcoes,"leia_ln",escopo);
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Numero de argumentos da funcao leia_ln.\n",num_linha);
 		exit(0);
@@ -434,7 +441,7 @@ chamada_funcao_interna
 | token_pr_imprima_ln token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
-	func = busca(tab_funcoes,"imprima_ln");
+	func = busca(tab_funcoes,"imprima_ln",escopo);
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Numero de argumentos da funcao imprima_ln.\n",num_linha);
 		exit(0);
@@ -444,7 +451,9 @@ chamada_funcao_interna
 | token_pr_maximo token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
-	func = busca(tab_funcoes,"maximo");
+	//EM EXPRESSAO TA TODAS AS VARIAVEIS E QUE ESTA SENDO USADA NA FUNCAO, AQUI TEM Q PEGAR EXPRESSAO E CADA VARIAVEL VERIFICAR O TIPO, NO CASO A QUE RECEBE A ATRIBUICAO VERIFICAR COM O RETORNO DA FUNCAO E AS OUTRAS COM OS PARAMETROS DA FUNCAO, FAZER ISSO PARA TODAS AS FUNCOES PRIMITIVAS
+	//printf("expressao = %s/n",expressao);
+	func = busca(tab_funcoes,"maximo",escopo);
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Numero de argumentos da funcao maximo.\n",num_linha);
 		exit(0);
@@ -454,7 +463,7 @@ chamada_funcao_interna
 | token_pr_minimo token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
-	func = busca(tab_funcoes,"minimo");
+	func = busca(tab_funcoes,"minimo",escopo);
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Numero de argumentos da funcao minimo.\n",num_linha);
 		exit(0);
@@ -464,7 +473,7 @@ chamada_funcao_interna
 | token_pr_media token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
-	func = busca(tab_funcoes,"media");
+	func = busca(tab_funcoes,"media",escopo);
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Numero de argumentos da funcao media.\n",num_linha);
 		exit(0);
@@ -477,11 +486,13 @@ paramentros_chamada_funcao
 : paramentros_chamada_funcao token_virgula expressao
 {
 	//conta quantos parametros a funcao esta recebendo
+	//printf("identificador =%s\n ",identificador);
 	qtd_parametros++;
 }
 | expressao
 {
 	//conta quantos parametros a funcao esta recebendo
+	//printf("identificador =%s\n ",identificador);
 	qtd_parametros++;
 }
 ;
@@ -539,16 +550,32 @@ main(){
 	func = inicializa();
 	//insere as funcoes primitivas da linguagem
 	insere_funcao(tab_funcoes,"leia",-1,1);
+	tipo_parametros[0]=2;
+	tipo_parametros[1]=-1;
+	insere_parametro_funcao(tab_funcoes,"leia",tipo_parametros);	
 	insere_funcao(tab_funcoes,"leia_ln",-1,1);
+	insere_parametro_funcao(tab_funcoes,"leia_ln",tipo_parametros);
 	insere_funcao(tab_funcoes,"imprima",-1,1);
+	insere_parametro_funcao(tab_funcoes,"imprima",tipo_parametros);
 	insere_funcao(tab_funcoes,"imprima_ln",-1,1);
-	insere_funcao(tab_funcoes,"-",0,1);
-	insere_funcao(tab_funcoes,"*",0,1);
-	insere_funcao(tab_funcoes,"/",0,1);
-	insere_funcao(tab_funcoes,"^",0,1);
+	insere_parametro_funcao(tab_funcoes,"imprima_ln",tipo_parametros);
+	insere_funcao(tab_funcoes,"-",0,2);
+	tipo_parametros[0]=0;
+	tipo_parametros[1]=0;
+	tipo_parametros[2]=-1;
+	insere_parametro_funcao(tab_funcoes,"-",tipo_parametros);
+	insere_funcao(tab_funcoes,"*",0,2);
+	insere_parametro_funcao(tab_funcoes,"*",tipo_parametros);
+	insere_funcao(tab_funcoes,"/",0,2);
+	insere_parametro_funcao(tab_funcoes,"/",tipo_parametros);
+	insere_funcao(tab_funcoes,"^",0,2);
+	insere_parametro_funcao(tab_funcoes,"^",tipo_parametros);
 	insere_funcao(tab_funcoes,"maximo",0,2);
+	insere_parametro_funcao(tab_funcoes,"maximo",tipo_parametros);
 	insere_funcao(tab_funcoes,"minimo",0,2);
+	insere_parametro_funcao(tab_funcoes,"minimo",tipo_parametros);
 	insere_funcao(tab_funcoes,"media",0,2);
+	insere_parametro_funcao(tab_funcoes,"media",tipo_parametros);
 	
 	yyparse();
 }
