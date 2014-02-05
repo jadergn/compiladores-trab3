@@ -430,14 +430,14 @@ declacarao_funcoes
 declaracao_funcao
 : token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_variaveis bloco_inicio
 {
-	tab_funcoes = insere_funcao_hash(tab_funcoes, func, tipo);
+	/*tab_funcoes = insere_funcao_hash(tab_funcoes, func, tipo);
 	if(tab_funcoes == NULL){
 		printf("Erro semantico na linha %d. Funcao redeclarada.\n",num_linha);
 		exit(0);
 	}
 	//printf ("identificador= %s\n",identificador);	
 	libera(func);
-	func = inicializa();
+	func = inicializa();*/
 }
 | token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_variaveis bloco_inicio
 {

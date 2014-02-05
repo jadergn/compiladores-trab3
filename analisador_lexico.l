@@ -102,8 +102,8 @@ default			{return token_pr_default;}
 ":="						{return token_atribuicao;}
 [a-zA-Z_][a-zA-Z0-9_]*		{
 	strcpy(identificador,yytext);
-	
-	strcat(expressao, '-');
+
+	strcat(expressao, "-");
 	strcat(expressao, identificador);
 
 	return token_identificador;
