@@ -123,7 +123,7 @@ bloco_variaveis
 		printf("Nao encontrado\n");*/
 }
 | token_pr_variaveis token_pr_fim_variaveis
-|
+| /*vazio*/
 ;
 
 declaracao_variaveis
@@ -428,7 +428,7 @@ declacarao_funcoes
 ;
 
 declaracao_funcao
-: token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio
+: token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_variaveis bloco_inicio
 {
 	tab_funcoes = insere_funcao_hash(tab_funcoes, func, tipo);
 	if(tab_funcoes == NULL){
@@ -439,7 +439,7 @@ declaracao_funcao
 	libera(func);
 	func = inicializa();
 }
-| token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_inicio
+| token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_variaveis bloco_inicio
 {
 	//printf("declaracao de funcoes - sem parametros\n");
 }

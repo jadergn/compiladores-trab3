@@ -101,21 +101,11 @@ default			{return token_pr_default;}
 ":"							{return token_dois_pontos;}
 ":="						{return token_atribuicao;}
 [a-zA-Z_][a-zA-Z0-9_]*		{
-	strcpy(identificador,yytext);	
+	strcpy(identificador,yytext);
 	
-	
-	//printf(" %d\n",strlen(expressao));
-	expressao[strlen(expressao)] = '-';
-	i=0;
-	c = yytext[i];
-	while(c!='\0'){
-		expressao[strlen(expressao)] = c;
-		i++;
-	//	printf("%c",c);
-		c = yytext[i];
-	}
-	expressao[strlen(expressao)]='\0';
-	//printf(" %d %s\n",strlen(expressao),expressao);
+	strcat(expressao, '-');
+	strcat(expressao, identificador);
+
 	return token_identificador;
 } 
 
