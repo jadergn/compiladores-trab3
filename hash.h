@@ -16,7 +16,7 @@ void verifica (Lista* l);
 int get_tipo(Lista* l);
 int verifica_tipo(Lista** h, char expressao[]);
 Lista* busca (Lista** l, char c[]);
-Lista* insere_variavel_lista(Lista* l, char nome[], int usada);
+Lista* insere_variavel_lista(Lista* l, char nome[], int tipo, int escopo, int usada);
 Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo);
 Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo);
 Lista** insere_funcao (Lista** l, char nome[], int retorno, int aridade);

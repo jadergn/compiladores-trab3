@@ -10,14 +10,15 @@ struct variavel{
 	char *nome;
 	void *valor;
 	int tipo; //inteiro=0, caracter=1, string=2, real=3, booleano =4
-	int escopo; //local=0, global=1
+	int escopo; //0 => global, > 0 => funcao/local
 	int  usada;
 };
 
 struct funcao{
 	char *nome;
 	int retorno; // inteiro=0, caracter=1, string=2, real=3, booleano =4
-	int  aridade; 
+	int  aridade;
+	int escopo;
 };
 
 //tipo pode ser variavel=0 funcao=1
@@ -163,15 +164,25 @@ void libera (Lista* l){
 	}
 }
 //insere a variavel em uma lista
-Lista* insere_variavel_lista(Lista* l, char nome[], int usada){
+Lista* insere_variavel_lista(Lista* l, char nome[], int tipo, int escopo, int usada){
 	Lista* novo = (Lista*) malloc(sizeof(Lista));
 	Variavel* var = (Variavel*) malloc (sizeof(Variavel));
 	var->nome = (char*) malloc ((strlen(nome)+1)*sizeof(char));
 	strcpy(var->nome,nome);
 	var->valor = NULL;
-	var->tipo = -1;
+	if(tipo >= 0) {
+		var->tipo = tipo;
+	}
+	else {
+		var->tipo = -1;	
+	}
+	if(escopo >= 0) {
+		var->escopo = escopo;
+	}
+	else {
+		var->escopo = -1;	
+	}
 	var->usada = usada;
-	var->escopo = -1;
 	novo->info = var;
 	novo->tipo = 0;
 	novo->prox = l;
@@ -182,16 +193,16 @@ Lista* insere_variavel_lista(Lista* l, char nome[], int usada){
 Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo){
 	Lista* p;
 	Variavel* v = (Variavel*) malloc (sizeof(Variavel));;
-	int usada,escopo;
+	int usada, escopo;
 	char nome[100];
 	
-	for(p=l;p!=NULL;p=p->prox){
+	for(p = l; p != NULL; p = p->prox){
 		
 		v = (Variavel*)p->info;
-		strcpy(nome,v->nome);
+		strcpy(nome, v->nome);
 		usada = v->usada;
 		escopo = 0;
-		if(insere_variavel(h, nome, tipo, usada,escopo) == NULL)
+		if(insere_variavel(h, nome, tipo, usada, escopo) == NULL)
 			return NULL;
 		nome[0]='\0';
 	}
@@ -288,7 +299,7 @@ Lista** insere_funcao (Lista** l, char nome[], int retorno, int aridade){
 
 	c =nome[i];
 	pos =pos+(int)c;
-	while(c!='\n'){
+	while(c != '\0'){
 		i++;	
 		c=nome[i];
 		pos=pos+(int)c;

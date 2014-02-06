@@ -101,7 +101,9 @@ default			{return token_pr_default;}
 ":"							{return token_dois_pontos;}
 ":="						{return token_atribuicao;}
 [a-zA-Z_][a-zA-Z0-9_]*		{
-	strcpy(identificador,yytext);
+
+	strcpy(identificador, yytext);
+	printf("id .l => %s\n", identificador);
 
 	strcat(expressao, "-");
 	strcat(expressao, identificador);
@@ -109,7 +111,8 @@ default			{return token_pr_default;}
 	return token_identificador;
 } 
 
-\/\/[^\n]*\n {num_linha++;}
+\/\/[^\n]*\n { num_linha++; }
+
 \/\*[^(\*\/)]*\*\/ {
 	strcpy(comentario,yytext);
 	for(i=0; i<strlen(comentario); i++){

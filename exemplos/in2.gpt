@@ -5,17 +5,24 @@ variáveis
     x : inteiro;
 fim-variáveis
 
+função fatorial(x1: inteiro, y1:inteiro, z1:real) : inteiro
 início
-    imprima("Digite um número:");
-    fat := leia();
+    retorne 1;
+fim
+
+função fatorial2(x2: inteiro) : real
+início
+    retorne 1.0;
+fim
+
+função fatorial3(x3: inteiro, z3:real) : caractere
+início
+    retorne '1';
+fim
+
+início
+    //imprima("Digite um número:");
+    //fat := leia();
     imprima("Fatorial de ", fat, " é igual a ", fatorial(fat));
 fim
 
-função fatorial(x: inteiro) : inteiro
-início
-    se x = 1 então
-        retorne 1;
-    senão
-        retorne x * fatorial(x + 1);
-    fim-se
-fim

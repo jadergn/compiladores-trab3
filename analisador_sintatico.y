@@ -1,11 +1,18 @@
 %{
 #include <stdio.h>
+#include <string.h>
 #include "hash.h"
 
 Lista **tab_variaveis, **tab_funcoes;
-Lista *var, *func;
+Lista *var, *func, *var_param;
+
 
 int i;
+int escopo = 1;
+int num_param = 0;
+char parametros[2000];
+char nome_funcao[200];
+
 extern int tipo;
 extern char * yytext;
 extern char identificador[100];
@@ -13,7 +20,6 @@ extern int num_linha;
 extern char expressao[2000];
 %}
 
-/*%error-verbose*/
 %token token_pr_algoritmo
 %token token_pr_variaveis
 %token token_pr_fim_variaveis
@@ -121,6 +127,7 @@ bloco_variaveis
 		imprime(busca(tab_variaveis,"a1a"));
 	else
 		printf("Nao encontrado\n");*/
+	expressao[0] = '\0';
 }
 | token_pr_variaveis token_pr_fim_variaveis
 | /*vazio*/
@@ -162,13 +169,13 @@ tipo_variavel
 lista_variaveis
 : lista_variaveis token_virgula token_identificador
 {
-	var = insere_variavel_lista(var,identificador,0);
+	var = insere_variavel_lista(var,identificador, -1, -1, 0);
 			
 	//printf("%s\n",identificador);
 }
 | token_identificador
 {
-	var = insere_variavel_lista(var,identificador,0);
+	var = insere_variavel_lista(var,identificador, -1, -1, 0);
 	//printf("%s\n",identificador);
 }
 ;
@@ -210,6 +217,10 @@ bloco_inicio
 lista_comandos
 : lista_comandos comando
 | comando
+{
+	//zerando a expressao a cada comando
+	expressao[0] = '\0';
+}
 ;
 
 comando
@@ -378,16 +389,19 @@ termo_9
 | valor_primitivo
 | chamada_funcao
 {
-	func = busca(tab_funcoes, identificador); 
+	printf("identificador (chamada_funcao) %s\n",identificador);
+	printf("expressao (chamada_funcao) %s\n",expressao);
+	func = busca(tab_funcoes, identificador);
 	if(func == NULL){
 		printf("Erro semantico na linha %d. Funcao nao declarada.\n",num_linha);
 		exit(0);
 		
-	} else {
+	}
+	else {
 		set_usada(func);
 		printf("Funcao declarada-> %s!!\n",identificador);
 	}
-	//printf("%s\n",expressao);
+	printf("%s\n",expressao);
 }
 | chamada_funcao_interna
 ;
@@ -430,14 +444,26 @@ declacarao_funcoes
 declaracao_funcao
 : token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_variaveis bloco_inicio
 {
-	/*tab_funcoes = insere_funcao_hash(tab_funcoes, func, tipo);
+//	printf ("identificador (declaracao_funcao) = %s\n",identificador);
+//	printf ("expressa (declaracao_funcao) = %s\n", expressao);
+	
+	// a partir da string 'expressao' eu pego o nome da funcao
+	nome_funcao[0] = '\0';
+	for(i = 1; expressao[i] != '-'; i++) {
+		nome_funcao[i-1] = expressao[i];
+	}
+
+	tab_funcoes = insere_funcao(tab_funcoes, nome_funcao, tipo, num_param);
 	if(tab_funcoes == NULL){
 		printf("Erro semantico na linha %d. Funcao redeclarada.\n",num_linha);
 		exit(0);
 	}
-	//printf ("identificador= %s\n",identificador);	
 	libera(func);
-	func = inicializa();*/
+	func = inicializa();
+	num_param = 0;
+	//imprime_hash(tab_funcoes);
+	expressao[0] = '\0';
+	
 }
 | token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_variaveis bloco_inicio
 {
@@ -447,6 +473,15 @@ declaracao_funcao
 
 paramentros_funcao_parenteses
 : token_abre_parenteses paramentros_funcao token_fecha_parenteses
+{
+
+	escopo++;
+	//printf("lista:\n");
+	//imprime(var_param);
+	//printf("\n");
+	libera(var_param);
+	var_param = inicializa();
+}
 | token_abre_parenteses token_fecha_parenteses
 ;
 
@@ -457,6 +492,13 @@ paramentros_funcao
 
 paramentro_funcao
 : token_identificador token_dois_pontos tipo_primitivo
+{
+//	printf ("identificador (paramentro_funcao) = %s\n",identificador);
+//	printf ("expressao (paramentro_funcao) = %s\n",expressao);
+	//printf("id: %s| tipo:%d | escopo:%d--\n", identificador, tipo, escopo);
+	//var_param = insere_variavel_lista(var_param, identificador, tipo, escopo, 0);
+	num_param++;
+}
 | token_identificador token_dois_pontos tipo_matriz
 ;
 
@@ -474,6 +516,8 @@ main(){
 	tab_funcoes = inicializa_hash();
 	func = inicializa();
 	
+	var_param = inicializa();
+
 	yyparse();
 }
 
