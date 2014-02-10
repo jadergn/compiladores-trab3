@@ -3,15 +3,18 @@
 #include <string.h>
 #include "hash.h"
 
-Lista **tab_variaveis, **tab_funcoes;
-Lista *var, *func, *var_param;
+Lista **tab_variaveis, **tab_funcoes, **aux;
+Lista *var, *func, *var_param, *retornos_chamada_funcao, *lista_exp;
+Lista *v;
 
+Pilha *pilha_exp;
+int expressao_tipo;
 
 int i;
 int escopo = 1;
 int num_param = 0;
 char parametros[2000];
-char nome_funcao[200];
+char expressao_1[200];
 
 extern int tipo;
 extern char * yytext;
@@ -111,7 +114,15 @@ extern char expressao[2000];
 
 algoritmo
 : declaracao_algoritmo bloco_variaveis declacarao_funcoes bloco_inicio 
+{
+	verifica_variavel_usada(tab_variaveis);
+	imprime_hash(tab_funcoes);
+}
 | declaracao_algoritmo bloco_variaveis bloco_inicio
+{
+	verifica_variavel_usada(tab_variaveis);
+	imprime_hash(tab_funcoes);
+}
 ;
 
 declaracao_algoritmo
@@ -208,9 +219,6 @@ tipo_primitivo_plural
 /*bloco inicio pode ser vazio*/
 bloco_inicio
 : token_pr_inicio lista_comandos token_pr_fim
-{
-	verifica_variavel_usada(tab_variaveis);
-}
 | token_pr_inicio token_pr_fim
 ;
 
@@ -226,8 +234,9 @@ lista_comandos
 comando
 : atribuicao
 {
-	if(!verifica_tipo(tab_variaveis,expressao))
-		printf("Erro semantico na linha %d. Tipo invalido associado a variavel.\n",num_linha);
+//	if(!verifica_tipo(tab_variaveis,expressao)) {
+//		printf("Erro semantico na linha %d. Tipo invalido associado a variavel.\n",num_linha);
+//	}
 
 	//printf("at %s\n",expressao);
 }
@@ -244,12 +253,13 @@ valor_esquerda
 : token_identificador
 {
 	//verifica se as variaveis que estao recebendo atribuicao foram declaradas, se sim usada=1
-	var =busca(tab_variaveis,identificador); 
+	var = busca(tab_variaveis,identificador); 
 	if(var == NULL){
 		printf("Erro semantico na linha %d. Variavel nao declarada.\n",num_linha);
 		exit(0);
 		
-	}else{
+	}
+	else{
 		set_usada(var);
 	}
 	for(i-0;i<2000;i++){
@@ -266,9 +276,18 @@ valor_esquerda
 atribuicao
 : valor_esquerda token_atribuicao expressao token_ponto_virgula
 {
-//printf("%s\n",identificador);
-//printf("%s\n",expressao);
+//verificar o tipo de retorno
+//	printf("expressao na atribuicao %s\n", expressao);
+//	for(i = 1; i < 2000 && (expressao[i] != '-' || expressao[i] == '\0'); i++) {
+//		expressao_1[i-1] = expressao[i];
+//	}
+	//printf("valor_esquerda %s\n", expressao_1);
+	//var = busca(tab_variaveis,identificador);
+	//printf("%d\n", expressao_tipo);
 
+//	if(get_tipo(var) != expressao_tipo) {
+//		printf("Incompatibilidade na atribuição da linha %d.\n", num_linha);
+//	}
 }
 ;
 
@@ -316,8 +335,26 @@ passo
 
 expressao
 : expressao token_pr_ou termo_1
+{
+	expressao_tipo = pilha_remove(pilha_exp);
+//	printf("Retorno da expressao: %d\n", expressao_tipo);
+	pilha_destroi(pilha_exp);
+	pilha_constroi(pilha_exp);
+}
 | expressao token_ou termo_1
+{
+	expressao_tipo = pilha_remove(pilha_exp);
+//	printf("Retorno da expressao: %d\n", expressao_tipo);
+	pilha_destroi(pilha_exp);
+	pilha_constroi(pilha_exp);
+}
 | termo_1
+{
+	expressao_tipo = pilha_remove(pilha_exp);
+//	printf("Retorno da expressao: %d\n", expressao_tipo);
+	pilha_destroi(pilha_exp);
+	pilha_constroi(pilha_exp);
+}
 ;
 
 termo_1
@@ -375,33 +412,76 @@ termo_9
 | token_abre_parenteses expressao token_fecha_parenteses
 | token_identificador
 {
-	var =busca(tab_variaveis,identificador); 
+	var = busca(tab_variaveis,identificador);
 	if(var == NULL){
 		printf("Erro semantico na linha %d. Variavel nao declarada.\n",num_linha);
 		exit(0);
 		
-	}else{
-		set_usada(var);
-		//printf("Variavel declarada-> %s!!\n",identificador);
-	}
-	//printf("%s\n",expressao);
-}
-| valor_primitivo
-| chamada_funcao
-{
-	printf("identificador (chamada_funcao) %s\n",identificador);
-	printf("expressao (chamada_funcao) %s\n",expressao);
-	func = busca(tab_funcoes, identificador);
-	if(func == NULL){
-		printf("Erro semantico na linha %d. Funcao nao declarada.\n",num_linha);
-		exit(0);
-		
 	}
 	else {
-		set_usada(func);
-		printf("Funcao declarada-> %s!!\n",identificador);
+
+		set_usada(var);
+		pilha_insere(pilha_exp, get_tipo(var));
+		if(pilha_verifica_compatibilidade(pilha_exp)) {
+			//pilha_imprime(pilha_exp);
+		}
+		else {
+			printf("Incompatibilidade de tipos na expressão da linha %d.\n", num_linha);
+			exit(0);
+		}
+		
+
+
+	//	printf("Variavel declarada-> %s!!\n",identificador);
+	//	printf("%s identificador (expressao termo_9) : tipo %d\n", identificador, get_tipo(var));
+	//	lista_exp = insere_variavel_lista(lista_exp, "", get_tipo(var), -1, -1);
+	//	printf("\n");
+	//	printf("lista após inserção\n");
+	//	imprime(lista_exp, 1);
+	//	printf("\n");
+	//	printf("\n");
 	}
-	printf("%s\n",expressao);
+}
+| valor_primitivo
+{
+
+	pilha_insere(pilha_exp, get_tipo(var));
+	if(pilha_verifica_compatibilidade(pilha_exp)) {
+		//pilha_imprime(pilha_exp);
+	}
+	else {
+		printf("Incompatibilidade de tipos na expressão da linha %d.\n", num_linha);
+		exit(0);
+	}
+
+//	printf("expressao valor primitivo\ntipo: %d\n", tipo);
+//	inserir na lista de variaveis referente a expressao (lista_exp)
+
+
+//	lista_exp = insere_variavel_lista(lista_exp, "", tipo, -1, -1);
+
+//	printf("\n");
+//	printf("-\n");
+//	printf("lista após inserção\n");
+//	//printf("tamanho: %d\n", tamanho(lista_exp));
+//	printf("-\n");
+//	imprime(lista_exp, 1);
+//	printf("\n");
+//	printf("\n");
+}
+| chamada_funcao
+{
+//	printf("identificador (chamada_funcao) %s\n",identificador);
+//	printf("expressao (chamada_funcao) %s\n",expressao);
+//	func = busca(tab_funcoes, identificador);
+//	if(func == NULL){
+//		printf("Erro semantico na linha %d. Funcao nao declarada.\n",num_linha);
+//		exit(0);
+//	}
+//	else {
+//		set_usada(func);
+//		printf("Funcao declarada-> %s!!\n",identificador);
+//	}
 }
 | chamada_funcao_interna
 ;
@@ -416,8 +496,14 @@ valor_primitivo
 ;
 
 chamada_funcao
-: token_identificador token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
+: token_identificador token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses
+{
+	//printf("\n* verificar se a funcao eh valida *\n\n");
+}
 | token_identificador token_abre_parenteses token_fecha_parenteses 
+{
+	//printf("\n* verificar se a funcao eh valida *\n\n");
+}
 ;
 
 chamada_funcao_interna
@@ -428,32 +514,29 @@ chamada_funcao_interna
 paramentros_chamada_funcao
 : paramentros_chamada_funcao token_virgula expressao
 | expressao
+{
+	//printf("\n* verificar se a expressa eh valida e obter o retorno dela*\n\n");
+}
 ;
 
 declacarao_funcoes
 : declacarao_funcoes declaracao_funcao
-{
-	//printf("declaracao de funcoes - ultima\n");
-}
 | declaracao_funcao
-{
-	//printf("declaracao de funcoes - primeira\n");
-}
 ;
 
 declaracao_funcao
 : token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_variaveis bloco_inicio
 {
 //	printf ("identificador (declaracao_funcao) = %s\n",identificador);
-//	printf ("expressa (declaracao_funcao) = %s\n", expressao);
+	printf ("expressa (declaracao_funcao) = %s\n", expressao);
 	
 	// a partir da string 'expressao' eu pego o nome da funcao
-	nome_funcao[0] = '\0';
+	expressao_1[0] = '\0';
 	for(i = 1; expressao[i] != '-'; i++) {
-		nome_funcao[i-1] = expressao[i];
+		expressao_1[i-1] = expressao[i];
 	}
 
-	tab_funcoes = insere_funcao(tab_funcoes, nome_funcao, tipo, num_param);
+	tab_funcoes = insere_funcao(tab_funcoes, expressao_1, tipo, num_param);
 	if(tab_funcoes == NULL){
 		printf("Erro semantico na linha %d. Funcao redeclarada.\n",num_linha);
 		exit(0);
@@ -462,7 +545,9 @@ declaracao_funcao
 	func = inicializa();
 	num_param = 0;
 	//imprime_hash(tab_funcoes);
-	expressao[0] = '\0';
+	for(i-0;i<2000;i++){
+		expressao[i]='\0';
+	}
 	
 }
 | token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_variaveis bloco_inicio
@@ -477,7 +562,7 @@ paramentros_funcao_parenteses
 
 	escopo++;
 	//printf("lista:\n");
-	//imprime(var_param);
+	//imprime(var_param, 1);
 	//printf("\n");
 	libera(var_param);
 	var_param = inicializa();
@@ -517,6 +602,17 @@ main(){
 	func = inicializa();
 	
 	var_param = inicializa();
+	retornos_chamada_funcao = inicializa();
+	
+//	lista_exp = inicializa();
+//
+//	lista_exp = insere_variavel_lista(lista_exp, "", 1, -1, -1);
+//	lista_exp = insere_variavel_lista(lista_exp, "", 2, -1, -1);
+//	lista_exp = insere_variavel_lista(lista_exp, "", 3, -1, -1);
+//	printf("Lista cheia\n");
+//	imprime(lista_exp, 1);
+
+	pilha_exp = pilha_constroi();
 
 	yyparse();
 }

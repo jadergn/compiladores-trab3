@@ -1,28 +1,41 @@
 algoritmo fatorial_recursivo;
 
+
 variáveis
     fat : inteiro;
     x : inteiro;
+    nome : literal;
+    c : caractere;
+    r: real;
 fim-variáveis
 
-função fatorial(x1: inteiro, y1:inteiro, z1:real) : inteiro
+
+função primeira_funcao() : inteiro
+variáveis
+    a : inteiro;
+    b : inteiro;
+    f : inteiro;
+fim-variáveis
+início
+    a := 1;
+    b := 2;
+    f := 3;
+    retorne a + b + f;
+fim
+
+
+função primeira_funcao() : inteiro
 início
     retorne 1;
 fim
 
-função fatorial2(x2: inteiro) : real
 início
-    retorne 1.0;
-fim
-
-função fatorial3(x3: inteiro, z3:real) : caractere
-início
-    retorne '1';
-fim
-
-início
-    //imprima("Digite um número:");
-    //fat := leia();
-    imprima("Fatorial de ", fat, " é igual a ", fatorial(fat));
+    primeira_funcao();
+    x := primeira_funcao();
+    x := 1 + fat + x;
+    r := r + 1;
+    nome := r + 1;
+//  r := r + c;
+//  x := 1 + c + nome;
 fim
 

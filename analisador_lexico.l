@@ -18,7 +18,7 @@ int tipo;
 
 algoritmo 		{return token_pr_algoritmo;}
 variáveis 		{return token_pr_variaveis;}
-fim-variáveis 		{return token_pr_fim_variaveis;}
+fim-variáveis	{return token_pr_fim_variaveis;}
 início			{return token_pr_inicio;}
 fim 			{return token_pr_fim;}
 inteiro 		{tipo = 0; return token_pr_inteiro;}
@@ -32,26 +32,26 @@ literais 		{return token_pr_literais;}
 lógico 			{return token_pr_logico;}
 lógicos 		{return token_pr_logicos;}
 matriz 			{return token_pr_matriz;}
-se 			{return token_pr_se;}
+senão 			{return token_pr_se;}
 então 			{return token_pr_entao;}
 senão 			{return token_pr_senao;}
 fim-se 			{return token_pr_fim_se;}
 para 			{return token_pr_para;}
-de 			{return token_pr_de;}
+de 				{return token_pr_de;}
 até 			{return token_pr_ate;}
 faça 			{return token_pr_faca;}
 fim-para 		{return token_pr_fim_para;}
 passo 			{return token_pr_passo;}
 enquanto 		{return token_pr_enquanto;}
-fim-enquanto 		{return token_pr_fim_enquanto;}
+fim-enquanto 	{return token_pr_fim_enquanto;}
 imprima 		{return token_pr_imprima;}
 leia 			{return token_pr_leia;}
 função 			{return token_pr_funcao;}
 retorne 		{return token_pr_retorne;}
 verdadeiro		{return token_pr_verdadeiro;}
 falso			{return token_pr_falso;}
-e			{return token_pr_e;}
-ou			{return token_pr_ou;}
+e				{return token_pr_e;}
+ou				{return token_pr_ou;}
 	
 escolha			{return token_pr_escolha;}
 caso			{return token_pr_caso;}	
@@ -62,10 +62,10 @@ default			{return token_pr_default;}
 ("+"|"-")?[0-9]+ |
 0(x|X)[0-9a-fA-F]+ |
 0(c|C)[0-7]+ |
-0(b|B)[0-1]+ 				{return token_inteiro;}
-("+"|-)?[0-9]"."[0-9]+ 		{return token_real;}
-\'([^\\]|\\.)?\'			{return token_caractere;}
-\"([^\"\\\n\r]|\\.)*\"		{return token_literal;}
+0(b|B)[0-1]+ 				{tipo = 0; return token_inteiro;}
+("+"|-)?[0-9]"."[0-9]+ 		{tipo = 3; return token_real;}
+\'([^\\]|\\.)?\'			{tipo = 1; return token_caractere;}
+\"([^\"\\\n\r]|\\.)*\"		{tipo = 2; return token_literal;}
 "+"							{return token_soma;}
 "-"							{return token_subtracao;}
 "\/"						{return token_divisao;}
@@ -103,7 +103,7 @@ default			{return token_pr_default;}
 [a-zA-Z_][a-zA-Z0-9_]*		{
 
 	strcpy(identificador, yytext);
-	printf("id .l => %s\n", identificador);
+//	printf("identificador (.l) => %s\n", identificador);
 
 	strcat(expressao, "-");
 	strcat(expressao, identificador);
@@ -111,7 +111,7 @@ default			{return token_pr_default;}
 	return token_identificador;
 } 
 
-\/\/[^\n]*\n { num_linha++; }
+\/\/[^\n]*\n {num_linha++; }
 
 \/\*[^(\*\/)]*\*\/ {
 	strcpy(comentario,yytext);

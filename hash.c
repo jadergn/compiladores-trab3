@@ -9,25 +9,33 @@
 struct variavel{
 	char *nome;
 	void *valor;
-	int tipo; //inteiro=0, caracter=1, string=2, real=3, booleano =4
-	int escopo; //0 => global, > 0 => funcao/local
+	int tipo; // inteiro = 0, caracter = 1, string = 2, real = 3, booleano = 4
+	int escopo; // (0) => global, (> 0) => funcao/local
 	int  usada;
 };
 
 struct funcao{
 	char *nome;
-	int retorno; // inteiro=0, caracter=1, string=2, real=3, booleano =4
+	int retorno; // inteiro = 0, caracter = 1, string = 2, real = 3, booleano = 4
 	int  aridade;
 	int escopo;
 };
 
-//tipo pode ser variavel=0 funcao=1
+//tipo pode ser variavel = 0 funcao = 1
 struct lista{
 	int tipo;
 	void *info;
 	struct lista *prox;
 };
 
+struct pilha {
+	Item *topo;
+};
+
+struct item {
+	int tipo;
+	struct item *prox;
+};
 
 Lista* inicializa (void){
 	return NULL;
@@ -81,7 +89,7 @@ Lista* busca (Lista** l, char nome[]){
 			v = (Variavel*)p->info;
 			//printf("v= %s, tipo = %d\n",v->nome,v->tipo);
 			if(strcmp(v->nome,nome)==0){
-				//printf("v= %s, tipo = %d\n",v->nome,v->tipo);
+				// printf("v= %s, tipo = %d\n",v->nome,v->tipo);
 				return p;			
 			}
 		}
@@ -129,7 +137,7 @@ int verifica_tipo(Lista** h, char expressao[]){
 int set_usada (Lista *l){
 	Variavel *v;
 	v= (Variavel*)l->info;
-	v->usada =1; 
+	v->usada =1;
 }
 
 /*Lista* retira (Lista* l, char c){
@@ -166,6 +174,16 @@ void libera (Lista* l){
 //insere a variavel em uma lista
 Lista* insere_variavel_lista(Lista* l, char nome[], int tipo, int escopo, int usada){
 	Lista* novo = (Lista*) malloc(sizeof(Lista));
+	
+	if(strcmp(nome, "") == 0) {
+		printf(" *** inserindo tipo na lista *** \n", nome);
+		novo->info = NULL;
+		novo->tipo = tipo;
+		novo->prox = l;
+		l = novo;
+		return l;
+	}
+
 	Variavel* var = (Variavel*) malloc (sizeof(Variavel));
 	var->nome = (char*) malloc ((strlen(nome)+1)*sizeof(char));
 	strcpy(var->nome,nome);
@@ -189,6 +207,32 @@ Lista* insere_variavel_lista(Lista* l, char nome[], int tipo, int escopo, int us
 	l = novo;
 	return l;
 }
+
+
+//remove o primeiro elemento da lista, semelhante ao pop
+Lista* remove_variavel_lista(Lista *l) {
+	Lista *p;
+	
+	p = l;
+	//lista vazia
+	if(!p) {
+		return NULL;
+	}
+	//lista com apenas 1 item
+	// else if(!p->prox) {
+	// 	l = NULL;
+	// 	return p;
+	// }
+	// lista com mais de 1 item
+	else {
+		// printf("nao vazia\n" );
+		l = l->prox;
+		return p;
+	}
+
+	return NULL;
+}
+
 //insere uma lista de variavel na tabela hash
 Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo){
 	Lista* p;
@@ -314,25 +358,33 @@ void imprime_hash(Lista** l){
 	int i;
 	for(i=0;i<TAM;i++){
 		if(l[i]!=NULL){
-			imprime(l[i]);
+			imprime(l[i], 0);
 		}	
 	}
 }
 
-void imprime (Lista* l){
+void imprime (Lista* l, int somente_tipo){
 	Lista* p;
-	Variavel *v;
-	Funcao *f;
-	for (p=l; p!= NULL; p=p->prox){
-		
-		if(p->tipo ==0){
-			v = (Variavel*)p->info;
-			printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d \n",v->nome,v->tipo,v->usada,v->escopo);		
-		}else if(p->tipo ==1){
-			f = (Funcao*)p->info;
-			printf("Funcao: nome = %s retorno = %d aridade = %d\n",f->nome, f->retorno, f->aridade);		
+	
+	if(somente_tipo) {
+		// printf("imprimindo lista de tipos\n", p->tipo);
+		for (p = l; p; p=p->prox){
+			printf(" tipo = %d\n", p->tipo);
+		}	
+	}
+	else {
+		Variavel *v;
+		Funcao *f;
+		for (p=l; p!= NULL; p=p->prox){
+			if(p->tipo ==0){
+				v = (Variavel*)p->info;
+				printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d \n",v->nome,v->tipo,v->usada,v->escopo);		
+			}
+			else if(p->tipo ==1){
+				f = (Funcao*)p->info;
+				printf("Funcao: nome = %s retorno = %d aridade = %d\n",f->nome, f->retorno, f->aridade);		
+			}
 		}
-		
 	}
 }
 
@@ -364,35 +416,111 @@ int get_tipo(Lista* l){
 	v=(Variavel*)l->info;
 	return v->tipo;
 }
-// void main (void){
-// 	int i;
-// 	Lista* l;
-// 	Lista** v;
-	
-// 	v = inicializa_hash();
-		
-// 	// v = insere_variavel(v, "a1\n", "jader", 2, 0, 0);
 
-// 	v = insere_funcao(v, "func1\n", 0, 1);
-	
-// 	// v = insere_variavel(v, "a2\n","j",2, 0, 0);
-	
-// 	v = insere_funcao(v, "func2\n", 2, 1);
-	
-// 	// v = insere_variavel(v, "a3\n","ja",2, 0, 0);
-	
-// 	v = insere_funcao(v, "func3\n", 3, 1);
-	
-// 	// v = insere_variavel(v, "a4\n","jad",2, 0, 0);
-	
-// 	v = insere_funcao(v, "func1\n", 0, 1);
-	
-// 	// v = insere_variavel(v, "a5\n","jade",2, 0, 0);
-	
-// 	v = insere_funcao(v, "func5\n", 1, 1);	
-	
-// 	// v = insere_variavel(v, "a1\n", "jader", 2, 0, 0);
-	
-// 	imprime_hash(v);
-	
+Lista * verifica_compatibilidade_tipo(Lista *l) {
+	Lista *p;
+	int tam;
+	tam = tamanho(l);
+
+	// se a lista tiver 2 items deve ser verificado os tipos dos dois items e retorna null para incompatibilidade
+	// ou uma lista com 1 item compativel. Por exemplo: 0 (inteiro) e 3 (real) retorna uma lista com apenas 3 (real)
+	if (tam > 1) {
+		
+	}
+
+}
+
+int tamanho(Lista* l) {
+	int tam = 0;
+	Lista *p;
+	for (p = l; p; p = p->prox) {
+		tam++;
+	}
+	return tam;
+}
+
+Pilha *pilha_constroi() {
+	Pilha *pilha;
+	pilha = (Pilha *)malloc(sizeof(Pilha));
+	pilha->topo = NULL;
+	return pilha;
+}
+
+int pilha_vazia(Pilha *pilha) {
+	if(!pilha->topo) {
+		return 1;
+	}
+	return 0;
+}
+
+int pilha_tamanho(Pilha *pilha) {
+	Item *pont;
+	int tam = 0;
+
+	if (pilha_vazia(pilha)) {
+		return 0;
+	}
+	for (pont = pilha->topo; pont; pont = pont->prox) {
+		tam++;
+	}
+
+	return tam;
+}
+
+void pilha_insere(Pilha *pilha, int inteiro) {
+	Item *novo;
+	novo = (Item *)malloc(sizeof(Item));
+	novo->tipo = inteiro;
+	novo->prox = pilha->topo;
+	pilha->topo = novo;
+}
+
+int pilha_remove(Pilha *pilha) {
+	Item *pont;
+	if(pilha_vazia(pilha)) {
+		return -1;
+	}
+	pont = pilha->topo;
+	pilha->topo = pilha->topo->prox;
+	return pont->tipo;
+}
+
+void pilha_destroi(Pilha *pilha) {
+	// implementar
+}
+
+void pilha_imprime(Pilha *pilha) {
+	Item *pont;
+
+	printf("Tamanho: %d\n", pilha_tamanho(pilha));	
+	printf(":");
+	for (pont = pilha->topo; pont; pont = pont->prox) {
+		printf("%d:", pont->tipo);
+	}
+	printf("\n");
+	return;
+}
+
+int pilha_verifica_compatibilidade(Pilha *pilha) {
+	int primeiro, segundo;
+
+	if(pilha_tamanho(pilha) > 1) {
+		primeiro = pilha_remove(pilha);
+		segundo = pilha_remove(pilha);
+
+		// coersão, operaçoes envolvendo int e real retornam real
+		if(primeiro == 0 && segundo == 3 || primeiro == 3 && segundo == 0) {
+			pilha_insere(pilha, 3);
+		}
+		else if(primeiro != segundo) {
+			return 0;
+		}
+		else if (primeiro == segundo) {
+			pilha_insere(pilha, primeiro);	
+		}
+	}
+	return 1;
+}
+
+// void main (void){
 // }
