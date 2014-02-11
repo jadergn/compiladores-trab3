@@ -8,6 +8,7 @@ int escopo;
 char c;
 char comentario[2000];
 char identificador[100];
+char funcao[100];
 char expressao[2000];
 int tipo;
 
@@ -18,7 +19,7 @@ int tipo;
 
 
 algoritmo 		{return token_pr_algoritmo;}
-variáveis 		{escopo = 1;return token_pr_variaveis;}
+variáveis 		{return token_pr_variaveis;}
 fim-variáveis 		{return token_pr_fim_variaveis;}
 início			{return token_pr_inicio;}
 fim 			{return token_pr_fim;}
@@ -53,6 +54,7 @@ maximo			{return token_pr_maximo;}
 minimo			{return token_pr_minimo;}
 media			{return token_pr_media;}
 função 			{escopo = 0;return token_pr_funcao;}
+fim-função		{escopo = 1;return token_pr_fim_funcao;}
 retorne 		{return token_pr_retorne;}
 verdadeiro		{return token_pr_verdadeiro;}
 falso			{return token_pr_falso;}
@@ -93,7 +95,7 @@ default			{return token_pr_default;}
 "~"							{return token_til;}
 "\""						{return token_aspas_dupla;}
 "'"							{return token_aspas_simples;}
-"("							{return token_abre_parenteses;}
+"("							{strcpy(funcao,identificador); return token_abre_parenteses;}
 ")"							{return token_fecha_parenteses;}
 "{"							{return token_abre_chaves;}
 "}"							{return token_fecha_chaves;}

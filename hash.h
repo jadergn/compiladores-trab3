@@ -14,10 +14,17 @@ int vazia (Lista* l);
 void verifica_variavel_usada(Lista** l);
 void verifica (Lista* l);
 int get_tipo(Lista* l);
+int get_escopo(Lista* l);
+int get_usada(Lista* l);
+char* get_nome(Lista* l);
+
 int get_aridade(Lista* l);
 int verifica_tipo(Lista** h, char expressao[], int escopo);
 Lista* busca (Lista** l, char c[], int escopo);
 Lista* insere_variavel_lista(Lista* l, char nome[], int usada);
+
+Lista* insere_variavel_lista1(Lista* l, char nome[], int tipo, int escopo, int usada);
+
 Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo,int escopo);
 Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo);
 Lista** insere_funcao (Lista** l, char nome[], int retorno, int aridade);

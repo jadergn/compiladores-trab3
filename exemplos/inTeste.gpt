@@ -5,6 +5,13 @@ Código que recebe um inteiro e diz se esse inteiro, que é uma idade, é adulto
 //inicio do algoritomo
 algoritmo idade;
 
+função teste(idade: inteiro, nome: literal) : literal
+início
+	idade := 100;
+	nome := "jader";	
+fim
+fim-função
+
 //variáveis
 variáveis
 	idade,a1a,a: inteiro;
@@ -13,8 +20,7 @@ fim-variáveis
 
 //inicio do programa
 início
-    	a1a := 1 + idade;
-	a1a := 1;
-	a1a := maximo(a,idade);
+	idade := teste(a,a1a,a1a);
 	nome := "jader";
+	a := 0 + "jader";
 fim

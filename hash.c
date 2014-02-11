@@ -79,6 +79,7 @@ Lista* busca (Lista** l, char nome[], int escopo){
 			}
 		}
 		if(p->tipo ==1){
+			//printf("nome = %s\n",nome);
 			f = (Funcao*)p->info;
 			if(strcmp(f->nome,nome)==0){
 				return p;			
@@ -106,15 +107,21 @@ int verifica_tipo(Lista** h, char expressao[], int escopo){
 		//busca a variavel na tabela de variaveis
 		l = busca(h,var, escopo);
 		if(l!=NULL){
-			v = (Variavel*) l->info;
-			if(tipo == -1){
-				tipo = v->tipo;
+			if(l->tipo == 0){
+				//printf("aqui!!\n");
+				v = (Variavel*) l->info;
+				if(tipo == -1){
+					tipo = v->tipo;
+				}
+				else{
+					//se tiver algum tipo diferente retorna 0
+					if (tipo != v->tipo)
+						return 0;
+				}
+			}else if(l->tipo == 1){
+				//printf("aquiqwe!\n");
 			}
-			else{
-				//se tiver algum tipo diferente retorna 0
-				if (tipo != v->tipo)
-					return 0;
-			}
+				
 			
 		}
 	}
@@ -151,6 +158,31 @@ Lista* insere_variavel_lista(Lista* l, char nome[], int usada){
 	novo->tipo = 0;
 	novo->prox = l;
 	l = novo;
+	return l;
+}
+Lista* insere_variavel_lista1(Lista* l, char nome[], int tipo, int escopo, int usada){
+	Lista* aux;
+	Lista* novo = (Lista*) malloc(sizeof(Lista));
+	Variavel* var = (Variavel*) malloc (sizeof(Variavel));
+	var->nome = (char*) malloc ((strlen(nome)+1)*sizeof(char));
+	strcpy(var->nome,nome);
+	var->valor = NULL;
+	var->tipo = tipo;
+	var->usada = usada;
+	var->escopo = escopo;
+	novo->info = var;
+	novo->tipo = 0;
+	novo->prox = NULL;
+	aux = l;
+	if(aux == NULL){
+		l=novo;
+	}else{
+	
+		while(aux->prox!=NULL){
+			aux = aux->prox;
+		}
+		aux->prox = novo;
+	}
 	return l;
 }
 //insere uma lista de variaveis na tabela hash
@@ -228,6 +260,8 @@ Lista* insere_funcao_lista(Lista* l, char nome[]){
 	return l;
 }
 
+
+
 //insere uma lista de funcoes na tabela hash
 Lista** insere_funcao_hash(Lista** h, Lista* l, int retorno, int aridade){
 	Lista* p;
@@ -258,6 +292,8 @@ Lista** insere_parametro_funcao(Lista** h, char nome[], int tipo_parametros[]){
 		}
 		f->tipo_parametros[i]=-1;
 	}
+	return h;
+	
 	
 }
 //insere uma funcao na tabela hash
@@ -347,6 +383,23 @@ int get_tipo(Lista* l){
 	Variavel *v;
 	v=(Variavel*)l->info;
 	return v->tipo;
+}
+int get_escopo(Lista* l){
+	Variavel *v;
+	v=(Variavel*)l->info;
+	return v->escopo;
+}
+
+int get_usada(Lista* l){
+	Variavel *v;
+	v=(Variavel*)l->info;
+	return v->usada;
+}
+
+char* get_nome(Lista* l){
+	Variavel *v;
+	v=(Variavel*)l->info;
+	return v->nome;
 }
 //retorna a aridade da funcao
 int get_aridade(Lista* l){

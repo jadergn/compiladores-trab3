@@ -3,14 +3,16 @@
 #include "hash.h"
 
 Lista **tab_variaveis, **tab_funcoes;
-Lista *var, *func;
+Lista *var, *func, *l, *v;
 
 int i;
 int qtd_parametros;
 int tipo_parametros[10];
+int retorno_func;
 extern int tipo;
 extern char * yytext;
 extern char identificador[100];
+extern char funcao[100];
 extern int num_linha;
 extern char expressao[2000];
 extern int escopo;
@@ -99,7 +101,7 @@ extern int escopo;
 %token token_atribuicao
 %token token_identificador 
 %token token_desconhecido
-
+%token token_pr_fim_funcao
 %token token_pr_escolha
 %token token_pr_caso 
 %token token_pr_fim_escolha
@@ -113,6 +115,9 @@ extern int escopo;
 
 algoritmo
 : declaracao_algoritmo declacarao_funcoes bloco_variaveis bloco_inicio 
+{
+	//imprime_hash(tab_variaveis);
+}
 | declaracao_algoritmo bloco_variaveis bloco_inicio
 {
 	//imprime_hash(tab_variaveis);
@@ -142,6 +147,8 @@ declaracao_variaveis
 : lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
 {
 	//insere a lista de variaveis(var) na tabela de variaveis(tab_variaveis), crio uma lista antes, pois so aqui fica sabendo do tipo das variaveis
+	//printf("escopo1 = %d\n",escopo);
+	//imprime(var);
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo,escopo);
 	//se retornar vazio foi pq tentou redeclarar uma variavel
 	if(tab_variaveis == NULL){
@@ -154,14 +161,16 @@ declaracao_variaveis
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
 	}
+	//imprime_hash(tab_variaveis);
 }
 | declaracao_variaveis lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
 {
 	//insere a lista de variaveis(var) na tabela de variaveis(tab_variaveis), cria uma lista antes pois so aqui fica sabendo do tipo das variaveis
+	//printf("escopo1 = %d\n",escopo);
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo,escopo);
 	//se retornar vazio foi pq tentou redeclarar uma variavel
 	if(tab_variaveis == NULL){
-		printf("Erro semantico na linha %d. Variavel redeclarada.\n",num_linha);
+		printf("vaErro semantico na linha %d. Variavel redeclarada.\n",num_linha);
 		exit(0);
 	}
 	libera(var);
@@ -170,6 +179,7 @@ declaracao_variaveis
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
 	}
+	//imprime_hash(tab_variaveis);
 }
 ;
 
@@ -183,19 +193,33 @@ lista_variaveis
 {
 	//insere todas as variaveis dentro de uma lista(todas as variaveis tem o mesmo tipo)
 	var = insere_variavel_lista(var,identificador,0);
+	//printf("identi = %s\n",identificador);
 }
 | token_identificador
 {
 	//insere todas as variaveis dentro de uma lista(todas as variaveis tem o mesmo tipo)
 	var = insere_variavel_lista(var,identificador,0);
+	//printf("identi = %s\n",identificador);
 }
 ;
 
 tipo_primitivo
 : token_pr_inteiro
+{
+	retorno_func = 0;
+}
 | token_pr_real
+{
+	retorno_func = 3;
+}
 | token_pr_caractere
+{
+	retorno_func = 1;
+}
 | token_pr_literal
+{
+	retorno_func = 2;
+}
 | token_pr_logico
 ;
 
@@ -235,6 +259,7 @@ comando
 : atribuicao
 {
 	//o vetor expressao armazena toda a expressao a ser analizada, se tiver associacao de tipo invalido na expressao retorna o erro
+	//printf("expressao = %s\n",expressao);
 	if(!verifica_tipo(tab_variaveis,expressao,escopo)){
 	
 		printf("Erro semantico na linha %d. Tipo invalido associado a variavel.\n",num_linha);
@@ -266,13 +291,16 @@ valor_esquerda
 	}else{
 		set_usada(var);
 	}
-	
+	var = inicializa();
 }
 | token_identificador matriz_colchetes
 ;
 
 atribuicao
 : valor_esquerda token_atribuicao expressao token_ponto_virgula
+{
+	//printf("expressao= %s\n",expressao);
+}
 ;
 
 comando_retorne
@@ -387,6 +415,7 @@ termo_9
 	}else{
 		set_usada(var);
 	}
+	var = inicializa();
 }
 | valor_primitivo
 | chamada_funcao
@@ -404,7 +433,15 @@ valor_primitivo
 
 chamada_funcao
 : token_identificador token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
+{
+	//printf("funcao1 = %s\n",funcao);
+	//imprime(v);
+	
+}
 | token_identificador token_abre_parenteses token_fecha_parenteses 
+{
+
+}
 ;
 
 chamada_funcao_interna
@@ -487,12 +524,21 @@ paramentros_chamada_funcao
 {
 	//conta quantos parametros a funcao esta recebendo
 	//printf("identificador =%s\n ",identificador);
+	l = busca(tab_variaveis,identificador,escopo);
+	//v = (Variavel*)l->info;
+	//printf("%d \n",get_tipo(l));
+	v = insere_variavel_lista1(v,identificador,get_tipo(l),get_escopo(l),get_usada(l));
 	qtd_parametros++;
 }
 | expressao
 {
 	//conta quantos parametros a funcao esta recebendo
 	//printf("identificador =%s\n ",identificador);
+	l = busca(tab_variaveis,identificador,escopo);
+	//v = (Variavel*)l->info;
+	//printf("%d \n",get_tipo(l));
+	v = insere_variavel_lista1(v,identificador,get_tipo(l),get_escopo(l),get_usada(l));
+	
 	qtd_parametros++;
 }
 ;
@@ -503,7 +549,7 @@ declacarao_funcoes
 ;
 
 declaracao_funcao
-: token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio
+: token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio token_pr_fim_funcao
 {
 	/*tab_funcoes = insere_funcao_hash(tab_funcoes, func, tipo);
 	if(tab_funcoes == NULL){
@@ -513,8 +559,13 @@ declaracao_funcao
 	//printf ("identificador= %s\n",identificador);	
 	libera(func);
 	func = inicializa();*/
+	tipo_parametros[qtd_parametros] = -1;
+	tab_funcoes = insere_funcao(tab_funcoes,funcao,retorno_func,qtd_parametros);
+	tab_funcoes = insere_parametro_funcao(tab_funcoes,funcao,tipo_parametros);
+	qtd_parametros=0;	
+	
 }
-| token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_inicio
+| token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_inicio token_pr_fim_funcao
 {
 	//printf("declaracao de funcoes - sem parametros\n");
 }
@@ -522,7 +573,19 @@ declaracao_funcao
 
 paramentros_funcao_parenteses
 : token_abre_parenteses paramentros_funcao token_fecha_parenteses
+{
+	//imprime_hash(tab_variaveis);
+	for(i=0;i<2000;i++){
+		expressao[i]='\0';
+	}
+}
 | token_abre_parenteses token_fecha_parenteses
+{
+	//imprime_hash(tab_variaveis);
+	for(i=0;i<2000;i++){
+		expressao[i]='\0';
+	}
+}
 ;
 
 paramentros_funcao
@@ -532,7 +595,17 @@ paramentros_funcao
 
 paramentro_funcao
 : token_identificador token_dois_pontos tipo_primitivo
+{
+	//printf("escopo = %d identificador = %s tipo = %d\n",escopo,identificador,tipo);
+	insere_variavel(tab_variaveis,identificador,tipo,0,escopo);
+	tipo_parametros[qtd_parametros] = tipo;
+	qtd_parametros++;
+}
 | token_identificador token_dois_pontos tipo_matriz
+{
+	tipo_parametros[qtd_parametros] = tipo;
+	qtd_parametros++;
+}
 ;
 
 
