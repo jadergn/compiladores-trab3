@@ -70,10 +70,10 @@ default			{return token_pr_default;}
 ("+"|"-")?[0-9]+ |
 0(x|X)[0-9a-fA-F]+ |
 0(c|C)[0-7]+ |
-0(b|B)[0-1]+ 				{return token_inteiro;}
-("+"|-)?[0-9]"."[0-9]+ 		{return token_real;}
-\'([^\\]|\\.)?\'			{return token_caractere;}
-\"([^\"\\\n\r]|\\.)*\"		{return token_literal;}
+0(b|B)[0-1]+ 				{tipo =0; return token_inteiro;}
+("+"|-)?[0-9]"."[0-9]+ 		{tipo =3; return token_real;}
+\'([^\\]|\\.)?\'			{tipo =1;return token_caractere;}
+\"([^\"\\\n\r]|\\.)*\"		{tipo =2; return token_literal;}
 "+"							{return token_soma;}
 "-"							{return token_subtracao;}
 "\/"						{return token_divisao;}

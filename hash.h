@@ -5,6 +5,8 @@
 typedef struct variavel Variavel;
 typedef struct funcao Funcao;
 typedef struct lista Lista;
+typedef struct pilha Pilha;
+typedef struct item Item;
 
 
 Lista* inicializa (void);
@@ -19,6 +21,7 @@ int get_usada(Lista* l);
 char* get_nome(Lista* l);
 
 int get_aridade(Lista* l);
+int get_retorno(Lista* l);
 int verifica_tipo(Lista** h, char expressao[], int escopo);
 Lista* busca (Lista** l, char c[], int escopo);
 Lista* insere_variavel_lista(Lista* l, char nome[], int usada);
@@ -32,5 +35,11 @@ Lista* insere_funcao_lista(Lista* l, char nome[]);
 Lista** insere_funcao_hash(Lista** h, Lista* l, int retorno, int aridade);
 Lista** insere_parametro_funcao(Lista** h, char nome[], int tipo_parametros[]);
 void imprime_hash(Lista** l);
+
+Pilha *pilha_constroi();
+int pilha_vazia(Pilha *pilha);
+void pilha_insere(Pilha *pilha, int inteiro);
+int pilha_remove(Pilha *pilha);
+void pilha_destroi(Pilha *pilha);
 
 

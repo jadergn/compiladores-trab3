@@ -407,3 +407,105 @@ int get_aridade(Lista* l){
 	f=(Funcao*)l->info;
 	return f->aridade;
 }
+
+int get_retorno(Lista* l){
+	Funcao *f;
+	f=(Funcao*)l->info;
+	return f->retorno;
+}
+
+
+
+//PILHA
+struct pilha {
+	Item *topo;
+};
+
+struct item {
+	int tipo;
+	struct item *prox;
+};
+
+Pilha *pilha_constroi() {
+	Pilha *pilha;
+	pilha = (Pilha *)malloc(sizeof(Pilha));
+	pilha->topo = NULL;
+	return pilha;
+}
+
+int pilha_vazia(Pilha *pilha) {
+	if(!pilha->topo) {
+		return 1;
+	}
+	return 0;
+}
+
+int pilha_tamanho(Pilha *pilha) {
+	Item *pont;
+	int tam = 0;
+
+	if (pilha_vazia(pilha)) {
+		return 0;
+	}
+	for (pont = pilha->topo; pont; pont = pont->prox) {
+		tam++;
+	}
+
+	return tam;
+}
+
+void pilha_insere(Pilha *pilha, int inteiro) {
+	Item *novo;
+	novo = (Item *)malloc(sizeof(Item));
+	novo->tipo = inteiro;
+	novo->prox = pilha->topo;
+	pilha->topo = novo;
+}
+
+int pilha_remove(Pilha *pilha) {
+	Item *pont;
+	if(pilha_vazia(pilha)) {
+		return -1;
+	}
+	pont = pilha->topo;
+	pilha->topo = pilha->topo->prox;
+	return pont->tipo;
+}
+
+void pilha_destroi(Pilha *pilha) {
+	// implementar
+}
+
+void pilha_imprime(Pilha *pilha) {
+	Item *pont;
+
+	printf("Tamanho: %d\n", pilha_tamanho(pilha));	
+	printf(":");
+	for (pont = pilha->topo; pont; pont = pont->prox) {
+		printf("%d:", pont->tipo);
+	}
+	printf("\n");
+	return;
+}
+
+int pilha_verifica_compatibilidade(Pilha *pilha) {
+	int primeiro, segundo;
+
+	if(pilha_tamanho(pilha) > 1) {
+		primeiro = pilha_remove(pilha);
+		segundo = pilha_remove(pilha);
+
+		// coersão, operaçoes envolvendo int e real retornam real
+		if(primeiro == 0 && segundo == 3 || primeiro == 3 && segundo == 0) {
+			pilha_insere(pilha, 3);
+		}
+		else if(primeiro != segundo) {
+			return 0;
+		}
+		else if (primeiro == segundo) {
+			pilha_insere(pilha, primeiro);	
+		}
+	}
+	return 1;
+}
+

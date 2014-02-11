@@ -5,10 +5,14 @@
 Lista **tab_variaveis, **tab_funcoes;
 Lista *var, *func, *l, *v;
 
+Pilha *pilha_exp;
+int expressao_tipo;
+
 int i;
 int qtd_parametros;
 int tipo_parametros[10];
 int retorno_func;
+char valor_esquerda[100];
 extern int tipo;
 extern char * yytext;
 extern char identificador[100];
@@ -259,12 +263,12 @@ comando
 : atribuicao
 {
 	//o vetor expressao armazena toda a expressao a ser analizada, se tiver associacao de tipo invalido na expressao retorna o erro
-	//printf("expressao = %s\n",expressao);
+	/*printf("expressao = %s\n",expressao);
 	if(!verifica_tipo(tab_variaveis,expressao,escopo)){
 	
 		printf("Erro semantico na linha %d. Tipo invalido associado a variavel.\n",num_linha);
 		exit(0);
-	}
+	}*/
 	//apaga o vetor de expressao
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
@@ -289,6 +293,7 @@ valor_esquerda
 		exit(0);
 		
 	}else{
+		strcpy(valor_esquerda,identificador);
 		set_usada(var);
 	}
 	var = inicializa();
@@ -299,7 +304,13 @@ valor_esquerda
 atribuicao
 : valor_esquerda token_atribuicao expressao token_ponto_virgula
 {
-	//printf("expressao= %s\n",expressao);
+	printf("valor= %s\n",valor_esquerda);
+	var =busca(tab_variaveis,valor_esquerda, escopo);
+	if(get_tipo(var)!=expressao_tipo){
+		printf("Erro semantico na linha %d. Tipo de atribuicao invalida.\n",num_linha);
+		exit(0);
+	}
+	var=inicializa();
 }
 ;
 
@@ -347,8 +358,26 @@ passo
 
 expressao
 : expressao token_pr_ou termo_1
+{
+	expressao_tipo = pilha_remove(pilha_exp);
+//	printf("Retorno da expressao: %d\n", expressao_tipo);
+	pilha_destroi(pilha_exp);
+	pilha_constroi(pilha_exp);
+}
 | expressao token_ou termo_1
+{
+	expressao_tipo = pilha_remove(pilha_exp);
+//	printf("Retorno da expressao: %d\n", expressao_tipo);
+	pilha_destroi(pilha_exp);
+	pilha_constroi(pilha_exp);
+}
 | termo_1
+{
+	expressao_tipo = pilha_remove(pilha_exp);
+//	printf("Retorno da expressao: %d\n", expressao_tipo);
+	pilha_destroi(pilha_exp);
+	pilha_constroi(pilha_exp);
+}
 ;
 
 termo_1
@@ -414,11 +443,42 @@ termo_9
 		
 	}else{
 		set_usada(var);
+		pilha_insere(pilha_exp, get_tipo(var));
+		if(pilha_verifica_compatibilidade(pilha_exp)) {
+			//pilha_imprime(pilha_exp);
+		}
+		else {
+			printf("Incompatibilidade de tipos na expressão da linha %d.\n", num_linha);
+			exit(0);
+		}
 	}
 	var = inicializa();
 }
 | valor_primitivo
+{
+
+	pilha_insere(pilha_exp, tipo);
+	if(pilha_verifica_compatibilidade(pilha_exp)) {
+		pilha_imprime(pilha_exp);
+	}
+	else {
+		printf("Incompatibilidade de tipos na expressão da linha %d.\n", num_linha);
+		exit(0);
+	}
+}
 | chamada_funcao
+{
+	func = busca(tab_funcoes,funcao,escopo);
+	pilha_insere(pilha_exp,get_retorno(func));
+	if(pilha_verifica_compatibilidade(pilha_exp)) {
+		pilha_imprime(pilha_exp);
+	}
+	else {
+		printf("Incompatibilidade de tipos na expressão da linha %d.\n", num_linha);
+		exit(0);
+	}
+	func = inicializa();
+}
 | chamada_funcao_interna
 ;
 
@@ -434,13 +494,29 @@ valor_primitivo
 chamada_funcao
 : token_identificador token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
 {
-	//printf("funcao1 = %s\n",funcao);
-	//imprime(v);
+	printf("qtd = %d\n",qtd_parametros);
+	func = busca(tab_funcoes,funcao,escopo);
+	if(qtd_parametros != get_aridade(func)){
+		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
+		exit(0);
+	}
+	func = inicializa();
+	imprime(v);
+	printf("-->%s\n",expressao);
+	imprime(v);
 	
 }
 | token_identificador token_abre_parenteses token_fecha_parenteses 
 {
-
+	printf("qtd = %d\n",qtd_parametros);
+	func = busca(tab_funcoes,funcao,escopo);
+	if(qtd_parametros != get_aridade(func)){
+		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
+		exit(0);
+	}
+	func = inicializa();
+	imprime(v);
+	printf("-->%s\n",expressao);	
 }
 ;
 
@@ -649,6 +725,8 @@ main(){
 	insere_parametro_funcao(tab_funcoes,"minimo",tipo_parametros);
 	insere_funcao(tab_funcoes,"media",0,2);
 	insere_parametro_funcao(tab_funcoes,"media",tipo_parametros);
+	
+	pilha_exp = pilha_constroi();
 	
 	yyparse();
 }
