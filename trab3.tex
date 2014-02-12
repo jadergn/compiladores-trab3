@@ -2,7 +2,7 @@
 \usepackage[utf8]{inputenc}
 
 %opening
-\title{2º Trabalho de Compiladores - Analisador Sintático}
+\title{3º Trabalho de Compiladores - Analisador Semântico}
 \author{Jader Gomes Nascimento e Fernando Guimarães Pinheiro}
 
 \begin{document}
@@ -14,7 +14,8 @@ Documentação referente à terceira parte do trabalho de compiladores, que cons
 \end{abstract}
 
 \section{Introdução}
-O objetivo deste trabalho é estabelecer um analisador semântico para a linguagem GPortugol. O analisador semântico é a terceira parte de um compilador, e sua função é verificar se as variáveis utilizadas foram declaradas, se há variáveis redeclaradas, se há variáveis declaradas e não utilizadas, se os tipos associados às variáveis e ao valor associado são compatíveis, se o número de argumentos (aridade) de uma função ou procedimento está correto, se o tipo associado ao valor de retorno de uma função está correto e se os tipos associados aos argumentos de uma função ou procedimento estão corretos.
+O objetivo deste trabalho é estabelecer um analisador semântico para a linguagem GPortugol. O analisador semântico é a terceira parte
+de um compilador, e sua função é verificar se as variáveis utilizadas foram declaradas, se há variáveis redeclaradas, se há variáveis declaradas e não utilizadas, se os tipos associados às variáveis e ao valor associado são compatíveis, se o número de argumentos (aridade) de uma função ou procedimento está correto, se o tipo associado ao valor de retorno de uma função está correto e se os tipos associados aos argumentos de uma função ou procedimento estão corretos.
 
 
 \section{Analizador semântico}
@@ -40,8 +41,10 @@ Poderia ter sido usado de uma maneira diferente. No caso da declarações de var
     \item Tipo booleano não aceito.
     \item É feito verificação de tipos nas expressões com coersão se necessário.
     \item Expressão dentro de expressões não é aceito.
+  \end{itemize}
 
 \section{Exemplos}
 Nos exemplos, foi explorado diversas situações para os diversos tipos de usuários. Foram criadas 10 situações, 5 situações corretas e 5
 situações erradas, tentando utilizar todas as funções que foram definadas.
+
 \end{document}
