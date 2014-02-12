@@ -19,9 +19,12 @@ variáveis
 	r: real;
 fim-variáveis
 
+
+
 //inicio do programa
 início
-	idade := 1 + teste(a,a1a);
+	//idade := 1 + teste(a,a1a);
 	nome := "jader";
+	teste(nome, nome);
 	//r := r + nome;
 fim

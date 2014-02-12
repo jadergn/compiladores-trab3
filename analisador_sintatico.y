@@ -118,11 +118,11 @@ extern int escopo;
 
 
 algoritmo
-: declaracao_algoritmo declacarao_funcoes bloco_variaveis bloco_inicio 
+: declaracao_algoritmo declaracao_funcoes bloco_variaveis bloco_inicio_principal
 {
 	//imprime_hash(tab_variaveis);
 }
-| declaracao_algoritmo bloco_variaveis bloco_inicio
+| declaracao_algoritmo bloco_variaveis bloco_inicio_principal
 {
 	//imprime_hash(tab_variaveis);
 	//printf("\n\n##########################\n\n");
@@ -245,9 +245,20 @@ tipo_primitivo_plural
 ;
 
 /*bloco inicio pode ser vazio*/
-bloco_inicio
+bloco_inicio_principal
 : token_pr_inicio lista_comandos token_pr_fim
 {
+	printf("escopo p: %d\n", escopo);
+	//fim do programa, verificas se tem alguma variavel que nao foi utilizada
+	verifica_variavel_usada(tab_variaveis);
+}
+| token_pr_inicio token_pr_fim
+;
+
+bloco_inicio_funcao
+: token_pr_inicio lista_comandos token_pr_fim
+{
+	printf("escopo f: %d\n", escopo);
 	//fim do programa, verificas se tem alguma variavel que nao foi utilizada
 	verifica_variavel_usada(tab_variaveis);
 }
@@ -459,7 +470,7 @@ termo_9
 
 	pilha_insere(pilha_exp, tipo);
 	if(pilha_verifica_compatibilidade(pilha_exp)) {
-		pilha_imprime(pilha_exp);
+		//pilha_imprime(pilha_exp);
 	}
 	else {
 		printf("Incompatibilidade de tipos na expressão da linha %d.\n", num_linha);
@@ -619,13 +630,13 @@ paramentros_chamada_funcao
 }
 ;
 
-declacarao_funcoes
-: declacarao_funcoes declaracao_funcao
+declaracao_funcoes
+: declaracao_funcoes declaracao_funcao
 | declaracao_funcao
 ;
 
 declaracao_funcao
-: token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio token_pr_fim_funcao
+: token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio_funcao token_pr_fim_funcao
 {
 	/*tab_funcoes = insere_funcao_hash(tab_funcoes, func, tipo);
 	if(tab_funcoes == NULL){
@@ -641,7 +652,7 @@ declaracao_funcao
 	qtd_parametros=0;	
 	
 }
-| token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_inicio token_pr_fim_funcao
+| token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_inicio_funcao token_pr_fim_funcao
 {
 	//printf("declaracao de funcoes - sem parametros\n");
 }
