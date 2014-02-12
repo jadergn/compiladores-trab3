@@ -15,6 +15,7 @@ void imprime (Lista* l);
 int vazia (Lista* l);
 void verifica_variavel_usada(Lista** l);
 void verifica (Lista* l);
+int verifica_tipo_parametros_funcao(Lista** h, char funcao[],Lista* l);
 int get_tipo(Lista* l);
 int get_escopo(Lista* l);
 int get_usada(Lista* l);
