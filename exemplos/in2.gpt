@@ -1,21 +1,30 @@
 algoritmo fatorial_recursivo;
 
+função quadrado(x: inteiro) : inteiro
+início
+        retorne x * x;
+fim
+fim-função
+
+função cubo(x: inteiro) : inteiro
+início
+        retorne x * x * x;
+fim
+fim-função
+
 variáveis
-    fat : inteiro;
-    x : inteiro;
+    q : inteiro;
+    texto : literal;
 fim-variáveis
 
 início
-    imprima("Digite um número:");
-    fat := leia();
-    imprima("Fatorial de ", fat, " é igual a ", fatorial(fat));
-fim
+    texto := "Digite um número:";
+    imprima(texto);
+    leia(q);
+    imprima(quadrado(q));
 
-função fatorial(x: inteiro) : inteiro
-início
-    se x = 1 então
-        retorne 1;
-    senão
-        retorne x * fatorial(x + 1);
-    fim-se
+    texto := "Digite um número:";
+    imprima(texto);
+    leia(q);
+    imprima(cubo(q));
 fim
