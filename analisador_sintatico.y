@@ -162,7 +162,7 @@ declaracao_variaveis
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo,escopo);
 	//se retornar vazio foi pq tentou redeclarar uma variavel
 	if(tab_variaveis == NULL){
-		printf("vaErro semantico na linha %d. Variavel redeclarada.\n",num_linha);
+		printf("Erro semantico na linha %d. Variavel redeclarada.\n",num_linha);
 		exit(0);
 	}
 	libera(var);
@@ -641,9 +641,15 @@ declaracao_funcao
 : token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio_funcao token_pr_fim_funcao
 {
 	tipo_parametros[qtd_parametros] = -1;
+	func = busca(tab_funcoes, funcao, escopo);
+	if(func) {
+		printf("Erro semantico na linha %d. Função redeclarada.\n",num_linha);
+		exit(0);
+	}
 	tab_funcoes = insere_funcao(tab_funcoes,funcao,retorno_func,qtd_parametros);
 	tab_funcoes = insere_parametro_funcao(tab_funcoes,funcao,tipo_parametros);
-	qtd_parametros=0;	
+	qtd_parametros=0;
+//	func = inicializa();
 	
 }
 | token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_inicio_funcao token_pr_fim_funcao
