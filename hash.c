@@ -128,6 +128,23 @@ int verifica_tipo(Lista** h, char expressao[], int escopo){
 	//se todos os tipos forem iguais retorna 1
 	return 1;
 }
+int verifica_tipo_parametros_funcao(Lista** h, char funcao[],Lista* l){
+	Lista *lis, *aux;
+	Funcao *f;
+	Variavel *v;
+	int i=0;
+	
+	lis = busca(h,funcao,0);
+	f = (Funcao*)lis->info;
+	
+	for (aux=l; aux!=NULL; aux=aux->prox){
+		v = (Variavel *)aux->info;
+		if(f->tipo_parametros[i] != v->tipo)
+			return 0; 
+		i++;
+	}
+	return 1;
+}
 
 int set_usada (Lista *l){
 	Variavel *v;

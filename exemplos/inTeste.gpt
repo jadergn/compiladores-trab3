@@ -16,15 +16,20 @@ fim-função
 variáveis
 	idade,a1a,a: inteiro;
 	nome: literal;
-	r: real;
 fim-variáveis
 
 
 
 //inicio do programa
 início
-	//idade := 1 + teste(a,a1a);
+	idade := 1 + teste(a,nome);
 	nome := "jader";
-	teste(nome, nome);
-	//r := r + nome;
+	a1a := media(idade,a);
+	a1a := maximo(a1a,a);
+	a1a := 1 + minimo(a1a,a);
+	imprima(a);
+	imprima_ln(a);
+	idade := 1 + teste(a,nome);
+	leia(a);
+	leia_ln(a);
 fim

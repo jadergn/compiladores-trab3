@@ -119,15 +119,7 @@ extern int escopo;
 
 algoritmo
 : declaracao_algoritmo declaracao_funcoes bloco_variaveis bloco_inicio_principal
-{
-	//imprime_hash(tab_variaveis);
-}
 | declaracao_algoritmo bloco_variaveis bloco_inicio_principal
-{
-	//imprime_hash(tab_variaveis);
-	//printf("\n\n##########################\n\n");
-	//imprime_hash(tab_funcoes);
-}
 ;
 
 declaracao_algoritmo
@@ -151,8 +143,6 @@ declaracao_variaveis
 : lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
 {
 	//insere a lista de variaveis(var) na tabela de variaveis(tab_variaveis), crio uma lista antes, pois so aqui fica sabendo do tipo das variaveis
-	//printf("escopo1 = %d\n",escopo);
-	//imprime(var);
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo,escopo);
 	//se retornar vazio foi pq tentou redeclarar uma variavel
 	if(tab_variaveis == NULL){
@@ -165,12 +155,10 @@ declaracao_variaveis
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
 	}
-	//imprime_hash(tab_variaveis);
 }
 | declaracao_variaveis lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
 {
 	//insere a lista de variaveis(var) na tabela de variaveis(tab_variaveis), cria uma lista antes pois so aqui fica sabendo do tipo das variaveis
-	//printf("escopo1 = %d\n",escopo);
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo,escopo);
 	//se retornar vazio foi pq tentou redeclarar uma variavel
 	if(tab_variaveis == NULL){
@@ -183,7 +171,6 @@ declaracao_variaveis
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
 	}
-	//imprime_hash(tab_variaveis);
 }
 ;
 
@@ -197,13 +184,11 @@ lista_variaveis
 {
 	//insere todas as variaveis dentro de uma lista(todas as variaveis tem o mesmo tipo)
 	var = insere_variavel_lista(var,identificador,0);
-	//printf("identi = %s\n",identificador);
 }
 | token_identificador
 {
 	//insere todas as variaveis dentro de uma lista(todas as variaveis tem o mesmo tipo)
 	var = insere_variavel_lista(var,identificador,0);
-	//printf("identi = %s\n",identificador);
 }
 ;
 
@@ -248,7 +233,6 @@ tipo_primitivo_plural
 bloco_inicio_principal
 : token_pr_inicio lista_comandos token_pr_fim
 {
-	printf("escopo p: %d\n", escopo);
 	//fim do programa, verificas se tem alguma variavel que nao foi utilizada
 	verifica_variavel_usada(tab_variaveis);
 }
@@ -258,7 +242,6 @@ bloco_inicio_principal
 bloco_inicio_funcao
 : token_pr_inicio lista_comandos token_pr_fim
 {
-	printf("escopo f: %d\n", escopo);
 	//fim do programa, verificas se tem alguma variavel que nao foi utilizada
 	verifica_variavel_usada(tab_variaveis);
 }
@@ -273,13 +256,6 @@ lista_comandos
 comando
 : atribuicao
 {
-	//o vetor expressao armazena toda a expressao a ser analizada, se tiver associacao de tipo invalido na expressao retorna o erro
-	/*printf("expressao = %s\n",expressao);
-	if(!verifica_tipo(tab_variaveis,expressao,escopo)){
-	
-		printf("Erro semantico na linha %d. Tipo invalido associado a variavel.\n",num_linha);
-		exit(0);
-	}*/
 	//apaga o vetor de expressao
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
@@ -315,7 +291,6 @@ valor_esquerda
 atribuicao
 : valor_esquerda token_atribuicao expressao token_ponto_virgula
 {
-	printf("valor= %s\n",valor_esquerda);
 	var =busca(tab_variaveis,valor_esquerda, escopo);
 	if(get_tipo(var)!=expressao_tipo){
 		printf("Erro semantico na linha %d. Tipo de atribuicao invalida.\n",num_linha);
@@ -371,21 +346,18 @@ expressao
 : expressao token_pr_ou termo_1
 {
 	expressao_tipo = pilha_remove(pilha_exp);
-//	printf("Retorno da expressao: %d\n", expressao_tipo);
 	pilha_destroi(pilha_exp);
 	pilha_constroi(pilha_exp);
 }
 | expressao token_ou termo_1
 {
 	expressao_tipo = pilha_remove(pilha_exp);
-//	printf("Retorno da expressao: %d\n", expressao_tipo);
 	pilha_destroi(pilha_exp);
 	pilha_constroi(pilha_exp);
 }
 | termo_1
 {
 	expressao_tipo = pilha_remove(pilha_exp);
-//	printf("Retorno da expressao: %d\n", expressao_tipo);
 	pilha_destroi(pilha_exp);
 	pilha_constroi(pilha_exp);
 }
@@ -456,10 +428,9 @@ termo_9
 		set_usada(var);
 		pilha_insere(pilha_exp, get_tipo(var));
 		if(pilha_verifica_compatibilidade(pilha_exp)) {
-			//pilha_imprime(pilha_exp);
 		}
 		else {
-			printf("Incompatibilidade de tipos na expressão da linha %d.\n", num_linha);
+			printf("Erro semantico na linha %d. Incompatibilidade de tipos na expressão.\n", num_linha);
 			exit(0);
 		}
 	}
@@ -470,10 +441,9 @@ termo_9
 
 	pilha_insere(pilha_exp, tipo);
 	if(pilha_verifica_compatibilidade(pilha_exp)) {
-		//pilha_imprime(pilha_exp);
 	}
 	else {
-		printf("Incompatibilidade de tipos na expressão da linha %d.\n", num_linha);
+		printf("Erro semantico na linha %d. Incompatibilidade de tipos na expressão.\n", num_linha);
 		exit(0);
 	}
 }
@@ -482,15 +452,27 @@ termo_9
 	func = busca(tab_funcoes,funcao,escopo);
 	pilha_insere(pilha_exp,get_retorno(func));
 	if(pilha_verifica_compatibilidade(pilha_exp)) {
-		pilha_imprime(pilha_exp);
 	}
 	else {
-		printf("Incompatibilidade de tipos na expressão da linha %d.\n", num_linha);
+		printf("Erro semantico na linha %d. Incompatibilidade de tipos na expressão.\n", num_linha);
 		exit(0);
 	}
 	func = inicializa();
+	qtd_parametros=0;
 }
 | chamada_funcao_interna
+{
+	func = busca(tab_funcoes,funcao,escopo);
+	pilha_insere(pilha_exp,get_retorno(func));
+	if(pilha_verifica_compatibilidade(pilha_exp)) {
+	}
+	else {
+		printf("Erro semantico na linha %d. Incompatibilidade de tipos na expressão.\n", num_linha);
+		exit(0);
+	}
+	func = inicializa();
+	qtd_parametros=0;
+}
 ;
 
 valor_primitivo
@@ -505,29 +487,32 @@ valor_primitivo
 chamada_funcao
 : token_identificador token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
 {
-	printf("qtd = %d\n",qtd_parametros);
 	func = busca(tab_funcoes,funcao,escopo);
 	if(qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
 	func = inicializa();
-	imprime(v);
-	printf("-->%s\n",expressao);
-	imprime(v);
+	if(!verifica_tipo_parametros_funcao(tab_funcoes,funcao,v)){
+		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
+		exit(0);
+	}
+	v = inicializa();
 	
 }
 | token_identificador token_abre_parenteses token_fecha_parenteses 
 {
-	printf("qtd = %d\n",qtd_parametros);
 	func = busca(tab_funcoes,funcao,escopo);
 	if(qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
 	func = inicializa();
-	imprime(v);
-	printf("-->%s\n",expressao);	
+	if(!verifica_tipo_parametros_funcao(tab_funcoes,funcao,v)){
+		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
+		exit(0);
+	}
+	v = inicializa();
 }
 ;
 
@@ -537,9 +522,11 @@ chamada_funcao_interna
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela, em funcoes o escopo precisa ser colocado mas nao eh usado
 	func = busca(tab_funcoes,"imprima",escopo);
 	if (qtd_parametros != get_aridade(func)){
-		printf("Erro semantico na linha %d. Numero de argumentos da funcao imprima.\n",num_linha);
+		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	strcpy(funcao,"imprima");
+	v = inicializa();
 	qtd_parametros =0;	
 }
 | token_pr_leia token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
@@ -547,9 +534,11 @@ chamada_funcao_interna
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"leia",escopo);
 	if (qtd_parametros != get_aridade(func)){
-		printf("Erro semantico na linha %d. Numero de argumentos da funcao leia.\n",num_linha);
+		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	strcpy(funcao,"leia");
+	v = inicializa();
 	qtd_parametros =0;	
 }
 | token_pr_leia_ln token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
@@ -557,9 +546,11 @@ chamada_funcao_interna
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"leia_ln",escopo);
 	if (qtd_parametros != get_aridade(func)){
-		printf("Erro semantico na linha %d. Numero de argumentos da funcao leia_ln.\n",num_linha);
+		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	strcpy(funcao,"leia_ln");
+	v = inicializa();
 	qtd_parametros =0;	
 }
 | token_pr_imprima_ln token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
@@ -567,21 +558,27 @@ chamada_funcao_interna
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"imprima_ln",escopo);
 	if (qtd_parametros != get_aridade(func)){
-		printf("Erro semantico na linha %d. Numero de argumentos da funcao imprima_ln.\n",num_linha);
+		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	strcpy(funcao,"imprima_ln");
+	v = inicializa();
 	qtd_parametros =0;	
 }
 | token_pr_maximo token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
-	//EM EXPRESSAO TA TODAS AS VARIAVEIS E QUE ESTA SENDO USADA NA FUNCAO, AQUI TEM Q PEGAR EXPRESSAO E CADA VARIAVEL VERIFICAR O TIPO, NO CASO A QUE RECEBE A ATRIBUICAO VERIFICAR COM O RETORNO DA FUNCAO E AS OUTRAS COM OS PARAMETROS DA FUNCAO, FAZER ISSO PARA TODAS AS FUNCOES PRIMITIVAS
-	//printf("expressao = %s/n",expressao);
 	func = busca(tab_funcoes,"maximo",escopo);
 	if (qtd_parametros != get_aridade(func)){
-		printf("Erro semantico na linha %d. Numero de argumentos da funcao maximo.\n",num_linha);
+		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	strcpy(funcao,"maximo");
+	if(!verifica_tipo_parametros_funcao(tab_funcoes,funcao,v)){
+		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
+		exit(0);
+	}
+	v = inicializa();
 	qtd_parametros =0;	
 }
 | token_pr_minimo token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
@@ -589,9 +586,15 @@ chamada_funcao_interna
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"minimo",escopo);
 	if (qtd_parametros != get_aridade(func)){
-		printf("Erro semantico na linha %d. Numero de argumentos da funcao minimo.\n",num_linha);
+		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	strcpy(funcao,"minimo");
+	if(!verifica_tipo_parametros_funcao(tab_funcoes,funcao,v)){
+		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
+		exit(0);
+	}
+	v = inicializa();
 	qtd_parametros =0;	
 }
 | token_pr_media token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
@@ -599,10 +602,16 @@ chamada_funcao_interna
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"media",escopo);
 	if (qtd_parametros != get_aridade(func)){
-		printf("Erro semantico na linha %d. Numero de argumentos da funcao media.\n",num_linha);
+		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
 	qtd_parametros =0;	
+	strcpy(funcao,"media");
+	if(!verifica_tipo_parametros_funcao(tab_funcoes,funcao,v)){
+		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
+		exit(0);
+	}
+	v = inicializa();
 }
 ;
 
@@ -610,22 +619,15 @@ paramentros_chamada_funcao
 : paramentros_chamada_funcao token_virgula expressao
 {
 	//conta quantos parametros a funcao esta recebendo
-	//printf("identificador =%s\n ",identificador);
 	l = busca(tab_variaveis,identificador,escopo);
-	//v = (Variavel*)l->info;
-	//printf("%d \n",get_tipo(l));
 	v = insere_variavel_lista1(v,identificador,get_tipo(l),get_escopo(l),get_usada(l));
 	qtd_parametros++;
 }
 | expressao
 {
 	//conta quantos parametros a funcao esta recebendo
-	//printf("identificador =%s\n ",identificador);
 	l = busca(tab_variaveis,identificador,escopo);
-	//v = (Variavel*)l->info;
-	//printf("%d \n",get_tipo(l));
 	v = insere_variavel_lista1(v,identificador,get_tipo(l),get_escopo(l),get_usada(l));
-	
 	qtd_parametros++;
 }
 ;
@@ -638,14 +640,6 @@ declaracao_funcoes
 declaracao_funcao
 : token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio_funcao token_pr_fim_funcao
 {
-	/*tab_funcoes = insere_funcao_hash(tab_funcoes, func, tipo);
-	if(tab_funcoes == NULL){
-		printf("Erro semantico na linha %d. Funcao redeclarada.\n",num_linha);
-		exit(0);
-	}
-	//printf ("identificador= %s\n",identificador);	
-	libera(func);
-	func = inicializa();*/
 	tipo_parametros[qtd_parametros] = -1;
 	tab_funcoes = insere_funcao(tab_funcoes,funcao,retorno_func,qtd_parametros);
 	tab_funcoes = insere_parametro_funcao(tab_funcoes,funcao,tipo_parametros);
@@ -654,21 +648,21 @@ declaracao_funcao
 }
 | token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_inicio_funcao token_pr_fim_funcao
 {
-	//printf("declaracao de funcoes - sem parametros\n");
+	tipo_parametros[0] = -1;
+	tab_funcoes = insere_funcao(tab_funcoes,funcao,retorno_func,0);
+	tab_funcoes = insere_parametro_funcao(tab_funcoes,funcao,tipo_parametros);
 }
 ;
 
 paramentros_funcao_parenteses
 : token_abre_parenteses paramentros_funcao token_fecha_parenteses
 {
-	//imprime_hash(tab_variaveis);
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
 	}
 }
 | token_abre_parenteses token_fecha_parenteses
 {
-	//imprime_hash(tab_variaveis);
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
 	}
@@ -683,7 +677,6 @@ paramentros_funcao
 paramentro_funcao
 : token_identificador token_dois_pontos tipo_primitivo
 {
-	//printf("escopo = %d identificador = %s tipo = %d\n",escopo,identificador,tipo);
 	insere_variavel(tab_variaveis,identificador,tipo,0,escopo);
 	tipo_parametros[qtd_parametros] = tipo;
 	qtd_parametros++;
